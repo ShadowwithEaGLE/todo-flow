@@ -1,0 +1,7 @@
+# Open Design 内部文件，不入库
+.file-versions/
+.od-skills/
+
+# 原型开发辅助文件，不是产品本体
+example.html
+index.html
