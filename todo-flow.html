@@ -169,8 +169,10 @@
     .btn-ghost:hover { background: var(--highlight); color: var(--ink); border-color: var(--ink); }
     .btn-ghost[aria-pressed="true"] { background: var(--highlight); color: var(--ink); border-color: var(--ink); }
 
-    .list-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .list-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
     .list-head .count { font: 13px/1 var(--mono); color: var(--pencil); letter-spacing: 0.1em; }
+    .head-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .head-actions .btn-ghost { padding: 8px 12px; font-size: 14px; }
 
     /* ---------- task list ---------- */
     #taskList { display: flex; flex-direction: column; gap: 10px; }
@@ -307,6 +309,15 @@
     .modal-task.done .mt-title { text-decoration: line-through; opacity: 0.6; }
     .m-empty { font: 15px/1.5 var(--hand); color: var(--pencil); border: 2px dashed var(--pencil); border-radius: 8px; padding: 14px; text-align: center; }
 
+    .modal-sm { width: min(420px, 100%); }
+    .im-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+    .im-actions .btn-primary, .im-actions .btn-ghost { width: 100%; text-align: center; }
+    .im-actions .btn-ghost.danger { border-color: var(--accent-text); color: var(--accent-text); }
+    .im-actions .btn-ghost.danger:hover { background: var(--accent-text); color: var(--paper); border-color: var(--accent-text); }
+    .im-sum { font: 14px/1.7 var(--hand); color: var(--ink); margin-top: 12px; }
+    .im-sum b { color: var(--accent-text); font-family: var(--mono); font-size: 13px; }
+    .im-err { font: 14px/1.7 var(--hand); color: var(--accent-text); border: 1.5px dashed var(--accent-text); border-radius: 8px; padding: 10px 12px; margin-top: 12px; }
+
     @media (max-width: 1280px) {
       .layout { grid-template-columns: 200px minmax(0,1fr); }
       .drawer { grid-column: 1 / -1; position: static; }
@@ -377,7 +388,12 @@
               <button type="button" class="tag" data-view="cal">日程</button>
             </div>
             <span class="count" id="listCount"></span>
-            <button type="button" class="btn-ghost" id="sortBtn" data-od-id="sort-ddl" aria-pressed="false">按 DDL 排序</button>
+            <div class="head-actions">
+              <button type="button" class="btn-ghost" id="sortBtn" data-od-id="sort-ddl" aria-pressed="false">按 DDL 排序</button>
+              <button type="button" class="btn-ghost" id="exportBtn" data-od-id="export" title="把全部任务备份成本地 JSON 文件">导出</button>
+              <button type="button" class="btn-ghost" id="importBtn" data-od-id="import" title="从备份 JSON 文件恢复">导入</button>
+              <input type="file" id="importFile" accept="application/json,.json" hidden />
+            </div>
           </div>
 
           <div id="taskList" data-od-id="task-list"></div>
@@ -410,6 +426,22 @@
           <button type="button" class="modal-close" id="mClose" aria-label="关闭">✕</button>
         </div>
         <div id="mBody"></div>
+      </div>
+    </div>
+    <div class="modal-mask" id="importModal" hidden>
+      <div class="modal modal-sm" role="dialog" aria-modal="true" data-od-id="import-modal">
+        <div class="modal-head">
+          <div>
+            <h4>导入备份</h4>
+            <div class="m-sub" id="imSub"></div>
+          </div>
+          <button type="button" class="modal-close" id="imClose" aria-label="关闭">✕</button>
+        </div>
+        <div id="imBody"></div>
+        <div class="im-actions">
+          <button type="button" class="btn-primary" id="imMerge" data-od-id="import-merge">合并（保留现有）</button>
+          <button type="button" class="btn-ghost danger" id="imOverwrite" data-od-id="import-overwrite">覆盖当前数据</button>
+        </div>
       </div>
     </div>
   </div>
@@ -657,6 +689,77 @@
         state.sort = !state.sort;
         save(); renderList();
       });
+
+      /* ---------- backup: export / import ---------- */
+      function downloadBlob(name, text) {
+        var blob = new Blob([text], { type: 'application/json' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url; a.download = name;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      }
+      document.getElementById('exportBtn').addEventListener('click', function () {
+        var payload = { app: 'flow-todo', ver: APP_VERSION, exported: fmtISO(new Date()), tasks: state.tasks };
+        downloadBlob('todo-flow-backup-' + fmtISO(new Date()) + '.json', JSON.stringify(payload, null, 2));
+      });
+
+      var importModal = document.getElementById('importModal');
+      var pendingImport = null;
+      function closeImportModal() { importModal.hidden = true; pendingImport = null; }
+      function applyImportedTasks(mode) {
+        if (!pendingImport) return;
+        if (mode === 'merge') {
+          var seen = {};
+          state.tasks.forEach(function (t) { seen[t.id] = 1; });
+          pendingImport.forEach(function (t) {
+            if (seen[t.id]) return;
+            seen[t.id] = 1; state.tasks.push(t);
+          });
+        } else {
+          state.tasks = pendingImport;
+        }
+        state.tasks.forEach(function (t) {
+          if (STAGE_MIGRATE[t.stage]) t.stage = STAGE_MIGRATE[t.stage];
+          if (t.done) t.stage = '已完成';
+          if (t.stage === '已完成') t.done = true;
+        });
+        closeImportModal();
+        save(); renderAll();
+      }
+      document.getElementById('imClose').addEventListener('click', closeImportModal);
+      importModal.addEventListener('click', function (e) { if (e.target === importModal) closeImportModal(); });
+      document.getElementById('imMerge').addEventListener('click', function () { applyImportedTasks('merge'); });
+      document.getElementById('imOverwrite').addEventListener('click', function () { applyImportedTasks('overwrite'); });
+      document.getElementById('importBtn').addEventListener('click', function () { document.getElementById('importFile').click(); });
+      document.getElementById('importFile').addEventListener('change', function (e) {
+        var file = e.target.files && e.target.files[0];
+        this.value = '';
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function () {
+          var data;
+          try { data = JSON.parse(reader.result); } catch (err) { data = null; }
+          var tasks = data && Array.isArray(data.tasks) ? data.tasks
+            : Array.isArray(data) ? data
+            : null;
+          if (!tasks || !tasks.length) {
+            document.getElementById('imSub').textContent = '文件无效';
+            document.getElementById('imBody').innerHTML = '<div class="im-err">不是本工具的备份文件：缺少任务数据（JSON 中的 tasks 数组）。</div>';
+            importModal.hidden = false;
+            return;
+          }
+          pendingImport = tasks.filter(function (t) { return t && t.id; });
+          var exist = {};
+          state.tasks.forEach(function (t) { exist[t.id] = 1; });
+          var addN = pendingImport.filter(function (t) { return !exist[t.id]; }).length;
+          document.getElementById('imSub').textContent = file.name;
+          document.getElementById('imBody').innerHTML = '<div class="im-sum">备份共 <b>' + pendingImport.length + '</b> 个任务；当前已有 <b>' + state.tasks.length + '</b> 个，其中 <b>' + addN + '</b> 个会新增。</div>';
+          importModal.hidden = false;
+        };
+        reader.readAsText(file);
+      });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !importModal.hidden) closeImportModal(); });
 
       /* ---------- render: drawer ---------- */
       var drawerEl = document.getElementById('drawer');
