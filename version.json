@@ -1,5 +1,5 @@
 {
-  "version": "0.4.0",
-  "note": "详情面板改为跟随任务就地展开，日程弹窗点击自动定位到清单并高亮；新增本地文件备份（导出/导入）。",
+  "version": "0.4.1",
+  "note": "更新横幅改为双按钮：预览新版（新窗口打开）+ 下载新版（自动下载新版 HTML 文件）。",
   "url": "https://shadowwitheagle.github.io/todo-flow/todo-flow.html"
 }
