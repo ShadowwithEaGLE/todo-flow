@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>流程待办 · Flow Board — 原型 v0.3.0</title>
+  <title>流程待办 · Flow Board — 原型 v0.4.0</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=DM+Serif+Display&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@700;900&family=Zhi+Mang+Xing+You&display=swap" rel="stylesheet" />
@@ -85,22 +85,18 @@
       padding: 26px 26px 32px;
       box-shadow: 6px 8px 0 -4px rgba(43,38,32,0.18);
     }
-    .layout { display: grid; grid-template-columns: 200px minmax(0,1fr) minmax(300px,340px); gap: 22px; align-items: start; }
+    .layout { display: grid; grid-template-columns: minmax(0,1fr); }
 
     /* ---------- stage nav ---------- */
-    aside.nav { padding: 6px 0 120px; }
-    aside.nav .brand { font: 900 26px/1 var(--serif); padding: 4px 6px; border-bottom: 2px solid var(--ink); display: inline-block; margin-bottom: 16px; }
-    aside.nav ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
-    aside.nav li { font: 17px/1.2 var(--hand); display: flex; align-items: center; gap: 10px; padding: 7px 6px; position: relative; cursor: pointer; color: var(--pencil); border-radius: 6px; }
-    aside.nav li:hover { color: var(--ink); background: rgba(43,38,32,0.05); }
-    aside.nav li .square { width: 14px; height: 14px; border: 1.5px solid currentColor; display: inline-block; flex-shrink: 0; }
-    aside.nav li .cnt { margin-left: auto; font: 11px/1 var(--mono); color: var(--pencil); padding: 3px 6px; border: 1.5px solid var(--rule); border-radius: 999px; background: var(--paper); }
-    aside.nav li.active { color: var(--ink); }
-    aside.nav li.active::before {
-      content: ''; position: absolute; left: -4px; right: -8px; top: 4px; bottom: 5px;
-      background: var(--highlight); opacity: 0.65; transform: skew(-6deg); z-index: -1;
-    }
-    aside.nav li.active .cnt { border-color: var(--ink); color: var(--ink); }
+    .stage-nav { list-style: none; padding: 0; margin: 0; display: inline-flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .stage-nav li { font: 14px/1 var(--hand); display: flex; align-items: center; gap: 6px; padding: 7px 12px; cursor: pointer; color: var(--pencil); border: 1.5px solid var(--pencil); border-radius: 999px; background: var(--paper); }
+    .stage-nav li:hover { color: var(--ink); border-color: var(--ink); background: var(--highlight); }
+    .stage-nav li .square { width: 10px; height: 10px; border: 1.5px solid currentColor; display: inline-block; flex-shrink: 0; }
+    .stage-nav li .cnt { font: 11px/1 var(--mono); color: var(--pencil); padding-left: 2px; }
+    .stage-nav li.active { background: var(--highlight); color: var(--ink); border-color: var(--ink); }
+    .stage-nav li.active .cnt { color: var(--ink); }
+
+    .panes { display: flex; flex-direction: column; gap: 18px; }
 
     /* ---------- new task form ---------- */
     .new-task { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
@@ -190,6 +186,8 @@
       background: var(--highlight); opacity: 0.4; transform: skew(-1deg); z-index: 0; border-radius: 8px;
     }
     .task > * { position: relative; z-index: 1; }
+    @keyframes rowFlash { 0% { box-shadow: 0 0 0 0 var(--highlight); } 35% { box-shadow: 0 0 0 5px var(--highlight); border-color: var(--accent-text); } 100% { box-shadow: 0 0 0 0 transparent; } }
+    .task.flash { animation: rowFlash 1.5s ease; }
     .task.done { opacity: 0.55; }
     .task.done .t-title { text-decoration: line-through; }
 
@@ -218,9 +216,13 @@
 
     .empty-list { border: 2px dashed var(--pencil); border-radius: 10px; padding: 28px; text-align: center; color: var(--pencil); font: 17px/1.5 var(--hand); background: var(--paper); }
 
-    /* ---------- drawer ---------- */
-    .drawer { position: sticky; top: 20px; border: 2px solid var(--ink); border-radius: 10px; background: var(--paper); padding: 16px; box-shadow: 4px 5px 0 -3px rgba(43,38,32,0.2); }
-    .drawer .d-empty { border: 2px dashed var(--pencil); border-radius: 8px; padding: 30px 18px; text-align: center; color: var(--pencil); font: 16px/1.6 var(--hand); }
+    /* ---------- drawer (inline expansion) ---------- */
+    @keyframes dIn { from { opacity: 0; transform: translateY(-10px); } }
+    .drawer { border: 2px solid var(--ink); border-radius: 10px; background: var(--paper); padding: 16px; box-shadow: 4px 5px 0 -3px rgba(43,38,32,0.2); }
+    .drawer.d-pop { animation: dIn 0.28s ease; }
+    .drawer[hidden] { display: none; }
+    .d-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0 22px; }
+    .d-headside { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
     .d-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
     .d-head h3 { font: 700 22px/1.3 var(--hand-bold); margin: 0; }
     .d-ddl { font: 13px/1 var(--mono); color: var(--pencil); margin-top: 8px; letter-spacing: 0.06em; }
@@ -249,7 +251,7 @@
 
     /* ---------- sticky note ---------- */
     .sticky {
-      position: absolute; left: 26px; bottom: 26px;
+      position: relative; margin: 22px 0 0 auto;
       padding: 10px 12px; max-width: 190px;
       font: 15px/1.4 'Zhi Mang Xing You', var(--hand);
       background: var(--note-yellow); transform: rotate(2.4deg);
@@ -318,16 +320,8 @@
     .im-sum b { color: var(--accent-text); font-family: var(--mono); font-size: 13px; }
     .im-err { font: 14px/1.7 var(--hand); color: var(--accent-text); border: 1.5px dashed var(--accent-text); border-radius: 8px; padding: 10px 12px; margin-top: 12px; }
 
-    @media (max-width: 1280px) {
-      .layout { grid-template-columns: 200px minmax(0,1fr); }
-      .drawer { grid-column: 1 / -1; position: static; }
-    }
-
     @media (max-width: 1100px) {
       .layout { grid-template-columns: 1fr; }
-      aside.nav { padding-bottom: 0; }
-      aside.nav ul { flex-direction: row; flex-wrap: wrap; }
-      .drawer { position: static; }
       .kpis { grid-template-columns: 1fr 1fr; }
       .new-task > input { flex-basis: 100%; }
       .new-task .date-fields { flex: 1 1 auto; }
@@ -341,7 +335,7 @@
   <div class="page">
     <div class="head" data-od-id="head">
       <h1><em>流程待办 · Flow Board</em>
-        <span class="pin"><span class="x"></span>原型 v0.3.0</span>
+        <span class="pin"><span class="x"></span>原型 v0.4.0</span>
       </h1>
       <div class="sub">记录流程节点 · 盯紧 DDL · 关联产出位置 · 引导补全要点</div>
       <div class="meta"><b>更新</b> <span id="todayLabel">—</span> · <b>DEVICE</b> DESKTOP 1440 · <b>FIDELITY</b> HIGH</div>
@@ -364,11 +358,6 @@
 
     <div class="canvas" data-od-id="canvas">
       <div class="layout">
-        <aside class="nav" data-od-id="sidebar">
-          <span class="brand">阶段</span>
-          <ul id="stageNav"></ul>
-        </aside>
-
         <div data-od-id="main">
           <form class="new-task" id="newTaskForm" data-od-id="new-task">
             <input id="ntTitle" type="text" placeholder="新任务标题，回车创建" autocomplete="off" />
@@ -387,6 +376,7 @@
               <button type="button" class="tag" data-view="list">清单</button>
               <button type="button" class="tag" data-view="cal">日程</button>
             </div>
+            <ul class="stage-nav" id="stageNav" data-od-id="stage-nav"></ul>
             <span class="count" id="listCount"></span>
             <div class="head-actions">
               <button type="button" class="btn-ghost" id="sortBtn" data-od-id="sort-ddl" aria-pressed="false">按 DDL 排序</button>
@@ -396,22 +386,23 @@
             </div>
           </div>
 
-          <div id="taskList" data-od-id="task-list"></div>
-
-          <div id="calWrap" data-od-id="calendar" hidden>
-            <div class="cal-head">
-              <div class="cal-title" id="calTitle"></div>
-              <div class="cal-nav">
-                <button type="button" class="btn-ghost" id="calPrev">← 上月</button>
-                <button type="button" class="btn-ghost" id="calToday">今天</button>
-                <button type="button" class="btn-ghost" id="calNext">下月 →</button>
+          <div class="panes">
+            <div id="calWrap" data-od-id="calendar" hidden>
+              <div class="cal-head">
+                <div class="cal-title" id="calTitle"></div>
+                <div class="cal-nav">
+                  <button type="button" class="btn-ghost" id="calPrev">← 上月</button>
+                  <button type="button" class="btn-ghost" id="calToday">今天</button>
+                  <button type="button" class="btn-ghost" id="calNext">下月 →</button>
+                </div>
               </div>
+              <div class="cal-grid" id="calGrid"></div>
             </div>
-            <div class="cal-grid" id="calGrid"></div>
+
+            <div id="taskList" data-od-id="task-list"></div>
+            <div class="drawer" id="drawer" data-od-id="drawer" hidden></div>
           </div>
         </div>
-
-        <div class="drawer" id="drawer" data-od-id="drawer"></div>
       </div>
 
       <div class="sticky" data-od-id="sticky-tip"><div class="tape"></div>每天开工先看<b>已逾期</b>和<b>临期</b>；红色虚线框 = 要点还没补全</div>
@@ -450,7 +441,7 @@
     (function () {
       var STAGES = ['待办', '进行中', '已完成'];
       var KEY = 'flow-todo-v1';
-      var APP_VERSION = '0.3.0';
+      var APP_VERSION = '0.4.0';
       var VERSION_URL = 'https://shadowwitheagle.github.io/todo-flow/version.json';
       var FIELDS = [
         { key: 'goal', label: '目标', hint: '这个任务要达成什么结果？一句话即可', required: true, multiline: true },
@@ -565,6 +556,32 @@
         return 'DDL ' + t.ddl + ' · 还剩 ' + d + ' 天';
       }
 
+      /* ---------- locate & reveal ---------- */
+      function scrollToEl(el, margin) {
+        var y = el.getBoundingClientRect().top + (window.pageYOffset || document.documentElement.scrollTop) - (margin || 90);
+        window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+      }
+      function revealDrawer() {
+        var drawerEl = document.getElementById('drawer');
+        if (drawerEl.hidden) return;
+        var r = drawerEl.getBoundingClientRect();
+        var vh = window.innerHeight || document.documentElement.clientHeight;
+        if (r.bottom > vh - 12) window.scrollBy({ top: r.bottom - vh + 24, behavior: 'smooth' });
+        else if (r.top < 70) window.scrollBy({ top: r.top - 80, behavior: 'smooth' });
+      }
+      function selectTaskLocate(id) {
+        var t = state.tasks.find(function (x) { return x.id === id; });
+        if (!t) return;
+        if (state.filter !== 'all' && t.stage !== state.filter) state.filter = 'all';
+        state.selectedId = id;
+        save(); renderAll();
+        var row = listEl.querySelector('.task[data-id="' + id + '"]');
+        if (!row) return;
+        scrollToEl(row, 96);
+        row.classList.add('flash');
+        setTimeout(function () { row.classList.remove('flash'); }, 1600);
+      }
+
       /* ---------- render: nav ---------- */
       var navEl = document.getElementById('stageNav');
       function renderNav() {
@@ -632,6 +649,25 @@
         }
         return undone.concat(done);
       }
+      function metaChipsHTML(t) {
+        var miss = missingOf(t);
+        var out = String(t.output || '').trim();
+        var outChip = out
+          ? (/^https?:\/\//i.test(out)
+              ? '<a class="chip chip-out" href="' + esc(out) + '" target="_blank" rel="noopener" data-stop="1">↗ ' + esc(shortOut(out)) + '</a>'
+              : '<span class="chip chip-out" title="' + esc(out) + '">↗ ' + esc(shortOut(out)) + '</span>')
+          : '<span class="chip chip-none">未关联产出</span>';
+        return '<span class="chip stage-tag">' + esc(t.stage) + '</span>'
+          + ddlChip(t)
+          + outChip
+          + (!t.done && miss > 0 ? '<span class="chip chip-miss">待补 ' + miss + ' 项</span>' : '');
+      }
+      function updateListRow(t) {
+        var row = listEl.querySelector('.task[data-id="' + t.id + '"]');
+        if (!row) return;
+        var meta = row.querySelector('.t-meta');
+        if (meta) meta.innerHTML = metaChipsHTML(t);
+      }
       function renderList() {
         var arr = visibleTasks();
         var label = state.filter === 'all' ? '全部' : state.filter;
@@ -643,23 +679,11 @@
           return;
         }
         listEl.innerHTML = arr.map(function (t) {
-          var miss = missingOf(t);
-          var out = String(t.output || '').trim();
-          var outChip = out
-            ? (/^https?:\/\//i.test(out)
-                ? '<a class="chip chip-out" href="' + esc(out) + '" target="_blank" rel="noopener" data-stop="1">↗ ' + esc(shortOut(out)) + '</a>'
-                : '<span class="chip chip-out" title="' + esc(out) + '">↗ ' + esc(shortOut(out)) + '</span>')
-            : '<span class="chip chip-none">未关联产出</span>';
           return '<div class="task' + (t.done ? ' done' : '') + (state.selectedId === t.id ? ' selected' : '') + '" data-id="' + t.id + '" data-od-id="task-' + t.id + '" role="button" tabindex="0">'
             + '<button type="button" class="check" data-check="1" aria-label="切换完成"></button>'
             + '<div class="t-main">'
             + '<div class="t-title">' + esc(t.title) + '</div>'
-            + '<div class="t-meta">'
-            + '<span class="chip stage-tag">' + esc(t.stage) + '</span>'
-            + ddlChip(t)
-            + outChip
-            + (!t.done && miss > 0 ? '<span class="chip chip-miss">待补 ' + miss + ' 项</span>' : '')
-            + '</div></div></div>';
+            + '<div class="t-meta">' + metaChipsHTML(t) + '</div></div></div>';
         }).join('');
       }
       listEl.addEventListener('click', function (e) {
@@ -673,8 +697,9 @@
           if (t) { t.done = !t.done; t.stage = t.done ? '已完成' : '待办'; save(); renderAll(); }
           return;
         }
-        state.selectedId = id;
+        state.selectedId = state.selectedId === id ? null : id;
         save(); renderAll();
+        if (state.selectedId) revealDrawer();
       });
       listEl.addEventListener('keydown', function (e) {
         if (e.key !== 'Enter' && e.key !== ' ') return;
@@ -682,12 +707,14 @@
         var row = e.target.closest('.task');
         if (!row) return;
         e.preventDefault();
-        state.selectedId = row.getAttribute('data-id');
+        var id2 = row.getAttribute('data-id');
+        state.selectedId = state.selectedId === id2 ? null : id2;
         save(); renderAll();
+        if (state.selectedId) revealDrawer();
       });
       sortBtn.addEventListener('click', function () {
         state.sort = !state.sort;
-        save(); renderList();
+        save(); renderList(); renderDrawer();
       });
 
       /* ---------- backup: export / import ---------- */
@@ -765,15 +792,19 @@
       var drawerEl = document.getElementById('drawer');
       function renderDrawer() {
         var t = state.tasks.find(function (x) { return x.id === state.selectedId; });
-        if (!t) {
-          drawerEl.innerHTML = '<div class="d-empty">← 点击左侧任意任务<br/>在这里查看详情、补全要点</div>';
-          return;
+        var row = t ? listEl.querySelector('.task[data-id="' + t.id + '"]') : null;
+        if (!t || !row) { drawerEl.hidden = true; return; }
+        var wasHidden = drawerEl.hidden;
+        if (drawerEl.parentNode !== listEl || drawerEl.previousElementSibling !== row) {
+          row.after(drawerEl);
         }
+        drawerEl.hidden = false;
+        if (wasHidden) drawerEl.classList.add('d-pop');
         var miss = missingOf(t);
         var filled = FIELDS.filter(function (f) { return f.required && String(t[f.key] || '').trim(); }).length;
         var dp = (t.ddl || '').split('-');
         var html = ''
-          + '<div class="d-head"><h3>' + esc(t.title) + '</h3><span class="chip stage-tag">' + esc(t.stage) + '</span></div>'
+          + '<div class="d-head"><h3>' + esc(t.title) + '</h3><div class="d-headside"><span class="chip stage-tag">' + esc(t.stage) + '</span><button type="button" class="modal-close" data-action="collapse" aria-label="收起详情">✕</button></div></div>'
           + '<div class="d-ddl">' + esc(ddlTextOf(t)) + '</div>'
           + '<div class="d-ddledit">'
           + '<div class="date-fields small" title="留空即为长期任务（未定 DDL）">'
@@ -787,7 +818,8 @@
           + (miss > 0 && !t.done
               ? '<div class="d-guide">还有 ' + miss + ' 项要点未补全，已用红色虚线框标出，边填边自动保存。</div>'
               : '')
-          + '<div class="d-complete">要点完整度 <b>' + filled + ' / 3</b></div>';
+          + '<div class="d-complete">要点完整度 <b>' + filled + ' / 3</b></div>'
+          + '<div class="d-grid">';
         FIELDS.forEach(function (f) {
           var val = String(t[f.key] || '');
           var missing = f.required && !val.trim();
@@ -799,12 +831,13 @@
             + '<div class="hint">→ ' + f.hint + '</div>'
             + '</div>';
         });
-        html += '<div class="d-actions">'
+        html += '</div><div class="d-actions">'
           + '<button type="button" class="btn-ghost" data-action="toggle-done">' + (t.done ? '↩ 重新打开' : '✓ 标记完成') + '</button>'
           + '<button type="button" class="btn-ghost danger" data-action="delete">删除任务</button>'
           + '</div>';
         drawerEl.innerHTML = html;
       }
+      drawerEl.addEventListener('animationend', function () { drawerEl.classList.remove('d-pop'); });
       drawerEl.addEventListener('input', function (e) {
         var el = e.target.closest('[data-field]');
         if (!el) return;
@@ -831,7 +864,7 @@
         var filled = FIELDS.filter(function (x) { return x.required && String(t[x.key] || '').trim(); }).length;
         var comp = drawerEl.querySelector('.d-complete b');
         if (comp) comp.textContent = filled + ' / 3';
-        renderKpis(); renderList();
+        renderKpis(); updateListRow(t);
       });
       drawerEl.addEventListener('input', function (e) {
         var dpEl = e.target.closest('[data-dp]');
@@ -848,7 +881,7 @@
         save();
         var line = drawerEl.querySelector('.d-ddl');
         if (line) line.textContent = ddlTextOf(t);
-        renderKpis(); renderList();
+        renderKpis(); updateListRow(t);
         if (state.view === 'cal') renderCal();
       });
       drawerEl.addEventListener('click', function (e) {
@@ -857,7 +890,10 @@
         var t = state.tasks.find(function (x) { return x.id === state.selectedId; });
         if (!t) return;
         var action = btn.getAttribute('data-action');
-        if (action === 'toggle-done') {
+        if (action === 'collapse') {
+          state.selectedId = null;
+          save(); renderAll();
+        } else if (action === 'toggle-done') {
           t.done = !t.done;
           t.stage = t.done ? '已完成' : '待办';
           save(); renderAll();
@@ -887,10 +923,7 @@
         document.querySelectorAll('.view-toggle .tag').forEach(function (b) {
           b.classList.toggle('active', b.getAttribute('data-view') === state.view);
         });
-        listEl.hidden = isCal;
         calWrap.hidden = !isCal;
-        sortBtn.style.display = isCal ? 'none' : '';
-        listCountEl.style.display = isCal ? 'none' : '';
         if (isCal) renderCal();
       }
       function shiftMonth(d) {
@@ -997,17 +1030,13 @@
       document.getElementById('mBody').addEventListener('click', function (e) {
         var row = e.target.closest('.modal-task');
         if (!row) return;
-        state.selectedId = row.getAttribute('data-id');
+        var id = row.getAttribute('data-id');
         closeDayModal();
-        save(); renderAll();
+        selectTaskLocate(id);
       });
       calGrid.addEventListener('click', function (e) {
         var chip = e.target.closest('.cal-task');
-        if (chip) {
-          state.selectedId = chip.getAttribute('data-id');
-          save(); renderAll();
-          return;
-        }
+        if (chip) { selectTaskLocate(chip.getAttribute('data-id')); return; }
         var more = e.target.closest('[data-more]');
         if (more) { openDayModal(more.getAttribute('data-more')); return; }
         var count = e.target.closest('[data-count]');
@@ -1128,6 +1157,7 @@
         state.selectedId = t.id;
         titleEl.value = '';
         save(); renderAll();
+        revealDrawer();
       });
 
       /* ---------- boot ---------- */

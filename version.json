@@ -1,5 +1,5 @@
 {
-  "version": "0.3.0",
-  "note": "首个托管版本：清单 / 日程月历 / DDL 提醒 / 产出关联 / 要点引导均已就绪。",
+  "version": "0.4.0",
+  "note": "详情面板改为跟随任务就地展开，日程弹窗点击自动定位到清单并高亮；新增本地文件备份（导出/导入）。",
   "url": "https://shadowwitheagle.github.io/todo-flow/todo-flow.html"
 }
