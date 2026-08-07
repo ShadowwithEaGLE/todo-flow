@@ -210,6 +210,17 @@
 
     .chip { font: 12px/1 var(--mono); padding: 5px 9px; border-radius: 999px; border: 1.5px solid var(--pencil); color: var(--pencil); letter-spacing: 0.04em; white-space: nowrap; }
     .chip.stage-tag { font-family: var(--hand); font-size: 13px; color: var(--ink); }
+    .chip.stage-tag.cycle { cursor: pointer; transition: background .12s, border-color .12s, color .12s; border-color: var(--ink); }
+    .chip.stage-tag.cycle:hover { background: var(--highlight); border-color: var(--accent-text); color: var(--accent-text); }
+    .chip.stage-tag.cycle:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; }
+    .chip.stage-tag.cycle .arw { font: 10px/1 var(--mono); margin-left: 4px; opacity: .55; }
+    /* 抽屉阶段分段按钮组 */
+    .d-stage-group { display: inline-flex; gap: 0; border: 1.5px solid var(--ink); border-radius: 999px; padding: 2px; background: var(--paper); }
+    .d-stage-btn { font: 13px/1 var(--hand); padding: 6px 13px; border: none; background: transparent; color: var(--pencil); cursor: pointer; border-radius: 999px; transition: background .12s, color .12s; white-space: nowrap; }
+    .d-stage-btn:hover { color: var(--ink); }
+    .d-stage-btn:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 1px; }
+    .d-stage-btn[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+    .d-stage-btn.done[aria-pressed="true"] { background: var(--accent-text); color: var(--paper); }
     .chip-over { background: var(--accent-text); border-color: var(--accent-text); color: var(--paper); }
     .chip-due { background: var(--highlight); border-color: var(--accent-text); color: var(--accent-text); }
     .chip-soon { border-color: var(--accent-text); color: var(--accent-text); }
@@ -250,7 +261,8 @@
     .field .hint { display: none; font: 13px/1.4 var(--hand); color: var(--accent-text); margin-top: 5px; }
     .field.missing .hint { display: block; }
 
-    .d-actions { display: flex; gap: 10px; margin-top: 18px; padding-top: 14px; border-top: 1.5px dashed var(--rule); }
+    .d-actions { display: flex; gap: 10px; margin-top: 18px; padding-top: 14px; border-top: 1.5px dashed var(--rule); align-items: center; justify-content: space-between; }
+    .d-actions .d-actions-hint { font: 12px/1.4 var(--hand); color: var(--pencil); flex: 1; }
     .d-actions .btn-ghost.danger:hover { background: var(--accent-text); color: var(--paper); border-color: var(--accent-text); }
 
     /* ---------- sticky note ---------- */
@@ -664,7 +676,9 @@
               ? '<a class="chip chip-out" href="' + esc(out) + '" target="_blank" rel="noopener" data-stop="1">↗ ' + esc(shortOut(out)) + '</a>'
               : '<span class="chip chip-out" title="' + esc(out) + '">↗ ' + esc(shortOut(out)) + '</span>')
           : '<span class="chip chip-none">未关联产出</span>';
-        return '<span class="chip stage-tag">' + esc(t.stage) + '</span>'
+        return (t.done
+            ? '<span class="chip stage-tag">' + esc(t.stage) + '</span>'
+            : '<button type="button" class="chip stage-tag cycle" data-cycle="1" data-stop="1" title="点击在 待办 / 进行中 之间切换" aria-label="切换阶段，当前 ' + t.stage + '">' + esc(t.stage) + '<span class="arw">⇄</span></button>')
           + ddlChip(t)
           + outChip
           + (!t.done && miss > 0 ? '<span class="chip chip-miss">待补 ' + miss + ' 项</span>' : '');
@@ -695,7 +709,7 @@
       }
       listEl.addEventListener('click', function (e) {
         var stop = e.target.closest('[data-stop]');
-        if (stop) { e.stopPropagation(); return; }
+        if (stop) { e.stopPropagation(); }
         var row = e.target.closest('.task');
         if (!row) return;
         var id = row.getAttribute('data-id');
@@ -704,6 +718,15 @@
           if (t) { t.done = !t.done; t.stage = t.done ? '已完成' : '待办'; save(); renderAll(); }
           return;
         }
+        if (e.target.closest('[data-cycle]')) {
+          var tc = state.tasks.find(function (x) { return x.id === id; });
+          if (tc && !tc.done) {
+            tc.stage = tc.stage === '待办' ? '进行中' : '待办';
+            save(); renderAll();
+          }
+          return;
+        }
+        if (stop) return;
         state.selectedId = state.selectedId === id ? null : id;
         save(); renderAll();
         if (state.selectedId) revealDrawer();
@@ -811,7 +834,14 @@
         var filled = FIELDS.filter(function (f) { return f.required && String(t[f.key] || '').trim(); }).length;
         var dp = (t.ddl || '').split('-');
         var html = ''
-          + '<div class="d-head"><h3>' + esc(t.title) + '</h3><div class="d-headside"><span class="chip stage-tag">' + esc(t.stage) + '</span><button type="button" class="modal-close" data-action="collapse" aria-label="收起详情">✕</button></div></div>'
+          + '<div class="d-head"><h3>' + esc(t.title) + '</h3><div class="d-headside">'
+          + '<div class="d-stage-group" role="group" aria-label="阶段流转">'
+          + ['待办','进行中','已完成'].map(function (s) {
+              var active = t.stage === s;
+              return '<button type="button" class="d-stage-btn' + (s === '已完成' ? ' done' : '') + '" data-action="set-stage" data-stage="' + s + '" data-stop="1" aria-pressed="' + (active ? 'true' : 'false') + '">' + s + '</button>';
+            }).join('')
+          + '</div>'
+          + '<button type="button" class="modal-close" data-action="collapse" aria-label="收起详情">✕</button></div></div>'
           + '<div class="d-ddl">' + esc(ddlTextOf(t)) + '</div>'
           + '<div class="d-ddledit">'
           + '<div class="date-fields small" title="留空即为长期任务（未定 DDL）">'
@@ -839,7 +869,7 @@
             + '</div>';
         });
         html += '</div><div class="d-actions">'
-          + '<button type="button" class="btn-ghost" data-action="toggle-done">' + (t.done ? '↩ 重新打开' : '✓ 标记完成') + '</button>'
+          + '<span class="d-actions-hint">阶段在顶部切换 · 勾选框可快速完成</span>'
           + '<button type="button" class="btn-ghost danger" data-action="delete">删除任务</button>'
           + '</div>';
         drawerEl.innerHTML = html;
@@ -899,6 +929,11 @@
         var action = btn.getAttribute('data-action');
         if (action === 'collapse') {
           state.selectedId = null;
+          save(); renderAll();
+        } else if (action === 'set-stage') {
+          var s = btn.getAttribute('data-stage');
+          if (s === '已完成') { t.done = true; t.stage = '已完成'; }
+          else { t.done = false; t.stage = s; }
           save(); renderAll();
         } else if (action === 'toggle-done') {
           t.done = !t.done;
