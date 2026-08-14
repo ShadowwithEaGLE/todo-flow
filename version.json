@@ -1,5 +1,5 @@
 {
-  "version": "0.4.2",
-  "note": "新增待办→进行中阶段流转：清单行阶段标签可点击切换，详情抽屉顶部改为分段按钮组。",
+  "version": "0.6.0",
+  "note": "新增日报/周报生成：日程视图加「生成报告」按钮，选日或选周自动汇总推进/新增/完成/事项，可编辑后复制或下载 .txt。",
   "url": "https://shadowwitheagle.github.io/todo-flow/todo-flow.html"
 }
