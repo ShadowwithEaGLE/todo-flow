@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>流程待办 · Flow Board — 原型 v0.6.0</title>
+  <title>流程待办 · Flow Board — 原型 v0.6.2</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=DM+Serif+Display&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@700;900&family=Zhi+Mang+Xing+You&display=swap" rel="stylesheet" />
@@ -434,7 +434,7 @@
   <div class="page">
     <div class="head" data-od-id="head">
       <h1><em>流程待办 · Flow Board</em>
-        <span class="pin"><span class="x"></span>原型 v0.6.0</span>
+        <span class="pin"><span class="x"></span>原型 v0.6.2</span>
       </h1>
       <div class="sub">记录流程节点 · 盯紧 DDL · 关联产出位置 · 引导补全要点</div>
       <div class="meta"><b>更新</b> <span id="todayLabel">—</span> · <b>DEVICE</b> DESKTOP 1440 · <b>FIDELITY</b> HIGH</div>
@@ -595,11 +595,16 @@
         </div>
         <div class="rep-date" id="repDateRow">
           <span class="fx-sep">日期</span>
-          <input class="fx-num" type="text" inputmode="numeric" id="repY" placeholder="YYYY" aria-label="年" />
-          <span class="fx-sep">/</span>
-          <input class="fx-num" type="text" inputmode="numeric" id="repM" placeholder="MM" aria-label="月" />
-          <span class="fx-sep">/</span>
-          <input class="fx-num" type="text" inputmode="numeric" id="repD" placeholder="DD" aria-label="日" />
+          <div class="date-fields" data-od-id="rep-date" data-noclear="1">
+            <input class="fx-num" type="text" inputmode="numeric" id="repY" placeholder="YYYY" aria-label="年" />
+            <span class="fx-sep">/</span>
+            <input class="fx-num" type="text" inputmode="numeric" id="repM" placeholder="MM" aria-label="月" />
+            <span class="fx-sep">/</span>
+            <input class="fx-num" type="text" inputmode="numeric" id="repD" placeholder="DD" aria-label="日" />
+            <button type="button" class="df-cal-btn" aria-label="打开小日历"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="12" rx="2"/><path d="M1.5 6h13M5 1v3M11 1v3"/></svg></button>
+          </div>
+          <button type="button" class="btn-ghost" id="repPrev" title="往回一天/一周">‹ 上一段</button>
+          <button type="button" class="btn-ghost" id="repNext" title="往后一天/一周">下一段 ›</button>
           <button type="button" class="btn-ghost" id="repToday">今日</button>
           <span class="rep-range" id="repRange"></span>
         </div>
@@ -609,7 +614,7 @@
           <button type="button" class="btn-ghost" id="repCopy" data-od-id="report-copy">复制</button>
           <button type="button" class="btn-ghost" id="repDownload" data-od-id="report-download">下载 .txt</button>
         </div>
-        <div class="rep-hint" id="repHint">提示：日报含某天的推进/新增/完成/事项；周报按天列出并汇总本周完成与新增清单。</div>
+        <div class="rep-hint" id="repHint">提示：可直接改日期或点日历按钮翻月挑任意往日/往周；‹ › 上一段/下一段按天（日报）或按周（周报）逐段切换。</div>
       </div>
     </div>
   </div>
@@ -618,7 +623,7 @@
     (function () {
        var STAGES = ['待办', '进行中', '已完成'];
       var KEY = 'flow-todo-v1';
-      var APP_VERSION = '0.6.0';
+      var APP_VERSION = '0.6.2';
       var VERSION_URL = 'https://shadowwitheagle.github.io/todo-flow/version.json';
       var FIELDS = [
         { key: 'goal', label: '目标', hint: '这个任务要达成什么结果？一句话即可', required: true, multiline: true },
@@ -1365,6 +1370,14 @@ if (s === '已完成') { t.done = true; t.stage = '已完成'; t.completedOn = f
         document.getElementById(id).addEventListener('input', repUpdateRange);
       });
       document.getElementById('repToday').addEventListener('click', function () { repFillDate(new Date()); });
+      function repStep(days) {
+        var iso = repReadDate();
+        var d = iso ? parseDay(iso) : new Date();
+        d.setDate(d.getDate() + days);
+        repFillDate(d);
+      }
+      document.getElementById('repPrev').addEventListener('click', function () { repStep(repTab === 'week' ? -7 : -1); });
+      document.getElementById('repNext').addEventListener('click', function () { repStep(repTab === 'week' ? 7 : 1); });
       document.getElementById('repGen').addEventListener('click', function () {
         var iso = repReadDate();
         var out = document.getElementById('repOut');
@@ -1667,7 +1680,7 @@ document.getElementById('mBody').addEventListener('keydown', function (e) {
             html += '<button type="button" class="' + cls + '" data-day="' + iso + '">' + d.getDate() + '</button>';
           }
           html += '</div><div class="dp-foot">'
-            + '<button type="button" data-dpact="clear">清除 · 设为长期</button>'
+            + (fieldsEl.hasAttribute('data-noclear') ? '<span></span>' : '<button type="button" data-dpact="clear">清除 · 设为长期</button>')
             + '<button type="button" data-dpact="today">今天</button>'
             + '</div>';
           pop.innerHTML = html;
@@ -1704,9 +1717,9 @@ document.getElementById('mBody').addEventListener('keydown', function (e) {
        var fixedModal = document.getElementById('fixedModal');
        var fxType = 'weekly';
        var fxDowSet = {};
-       var DOW_NAMES = ['一', '二', '三', '四', '五', '六', '日'];
+       var FX_DOWS = ['一', '二', '三', '四', '五', '六', '日'];
        var fxDowsEl = document.getElementById('fxDows');
-       fxDowsEl.innerHTML = DOW_NAMES.map(function (n, i) {
+       fxDowsEl.innerHTML = FX_DOWS.map(function (n, i) {
          return '<button type="button" class="fx-dow" data-dow="' + (i + 1) + '" aria-pressed="false">' + n + '</button>';
        }).join('');
        function renderFxList() {

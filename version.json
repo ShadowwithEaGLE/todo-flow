@@ -1,5 +1,5 @@
 {
-  "version": "0.6.0",
-  "note": "新增日报/周报生成：日程视图加「生成报告」按钮，选日或选周自动汇总推进/新增/完成/事项，可编辑后复制或下载 .txt。",
+  "version": "0.6.2",
+  "note": "修复星期计算 bug：固定日程的 DOW_NAMES 数组同名覆盖了报告用的数组，导致日报/周报里星期错位一天。已改名解耦。",
   "url": "https://shadowwitheagle.github.io/todo-flow/todo-flow.html"
 }
