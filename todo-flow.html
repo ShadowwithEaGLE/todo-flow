@@ -1,9 +1,9 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>流程待办 · Flow Board — 原型 v0.6.2</title>
+  <title>流程待办 · Flow Board — 原型 v0.7.0</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=DM+Serif+Display&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@700;900&family=Zhi+Mang+Xing+You&display=swap" rel="stylesheet" />
@@ -320,7 +320,10 @@
     .ms-item { border: 1.5px dashed var(--pencil); border-radius: 8px; padding: 8px 10px; min-width: 0; }
     .ms-item .ms-label { font: 12px/1 var(--mono); color: var(--pencil); letter-spacing: 0.1em; }
     .ms-item .ms-num { font: 900 22px/1.1 var(--serif); color: var(--ink); margin-top: 4px; }
-    .ms-item .ms-titles { font: 12px/1.5 var(--hand); color: var(--pencil); margin-top: 4px; max-height: 66px; overflow: auto; word-break: break-all; }
+    .ms-item .ms-titles { font: 12px/1.5 var(--hand); color: var(--pencil); margin-top: 4px; max-height: 66px; overflow: auto; }
+    .ms-item .ms-t { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+    .ms-item .ms-t:hover { color: var(--accent-text); }
+    .ms-item .ms-t.expanded { white-space: normal; overflow: visible; word-break: break-all; color: var(--ink); }
     .note-form { display: flex; gap: 8px; margin-bottom: 8px; }
     .note-form input { flex: 1; min-width: 0; min-height: 38px; border: 2px solid var(--pencil); border-radius: 8px; padding: 6px 10px; font: 14px/1.3 var(--hand); background: var(--paper); color: var(--ink); }
     .note-form input:focus { outline: none; border-color: var(--ink); }
@@ -354,6 +357,14 @@
     .modal-close:hover { background: var(--highlight); color: var(--ink); border-color: var(--ink); }
     .m-group { font: 12px/1 var(--mono); color: var(--pencil); letter-spacing: 0.14em; margin: 16px 0 8px; }
     .m-group b { color: var(--accent-text); }
+    .m-group.m-toggle { cursor: pointer; user-select: none; display: flex; align-items: center; gap: 6px; }
+    .m-group.m-toggle:hover { color: var(--ink); }
+    .m-group.m-toggle:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; }
+    .m-group.m-toggle .m-arrow { display: inline-block; font-size: 10px; transition: transform .15s ease; }
+    .m-group.m-toggle[aria-expanded="true"] .m-arrow { transform: rotate(90deg); }
+    #dayModalBox .modal-head { cursor: grab; user-select: none; touch-action: none; }
+    #dayModalBox .modal-head.dragging { cursor: grabbing; }
+    #dayModalBox .modal-head .modal-close { cursor: pointer; }
     .modal-task { display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 2px solid var(--pencil); border-radius: 8px; padding: 9px 12px; margin-bottom: 8px; cursor: pointer; background: var(--paper); }
     .modal-task:hover { border-color: var(--ink); background: var(--highlight); }
     .modal-task .mt-title { font: 700 16px/1.3 var(--hand-bold); min-width: 0; }
@@ -434,7 +445,7 @@
   <div class="page">
     <div class="head" data-od-id="head">
       <h1><em>流程待办 · Flow Board</em>
-        <span class="pin"><span class="x"></span>原型 v0.6.2</span>
+        <span class="pin"><span class="x"></span>原型 v0.7.0</span>
       </h1>
       <div class="sub">记录流程节点 · 盯紧 DDL · 关联产出位置 · 引导补全要点</div>
       <div class="meta"><b>更新</b> <span id="todayLabel">—</span> · <b>DEVICE</b> DESKTOP 1440 · <b>FIDELITY</b> HIGH</div>
@@ -515,7 +526,7 @@
       <div class="sticky" data-od-id="sticky-tip"><div class="tape"></div>每天开工先看<b>已逾期</b>和<b>临期</b>；红色虚线框 = 要点还没补全</div>
     </div>
     <div class="modal-mask" id="taskModal" hidden>
-      <div class="modal" role="dialog" aria-modal="true" data-od-id="day-modal">
+      <div class="modal" id="dayModalBox" role="dialog" aria-modal="true" data-od-id="day-modal">
         <div class="modal-head">
           <div>
             <h4 id="mTitle"></h4>
@@ -623,7 +634,7 @@
     (function () {
        var STAGES = ['待办', '进行中', '已完成'];
       var KEY = 'flow-todo-v1';
-      var APP_VERSION = '0.6.2';
+      var APP_VERSION = '0.7.0';
       var VERSION_URL = 'https://shadowwitheagle.github.io/todo-flow/version.json';
       var FIELDS = [
         { key: 'goal', label: '目标', hint: '这个任务要达成什么结果？一句话即可', required: true, multiline: true },
@@ -1457,7 +1468,7 @@ if (s === '已完成') { t.done = true; t.stage = '已完成'; t.completedOn = f
               + '<div class="cal-badges">'
               + (total > 0
                   ? '<span class="cal-count' + (hasOver ? ' over' : '') + '" data-count="' + iso + '">' + total + ' 项'
-                    + '<span class="cal-tip">历史未完成 <b>' + backlog.length + '</b> 项<br/>当天新建 <b>' + created.length + '</b> 项<br/>点击查看完整清单</span></span>'
+                    + '<span class="cal-tip">正在进行 <b>' + backlog.length + '</b> 项<br/>当天新建 <b>' + created.length + '</b> 项<br/>点击查看完整清单</span></span>'
                   : '')
               + (fixeds.length
                   ? '<span class="cal-count fixed" data-count="' + iso + '">' + fixeds.length + ' 固定'
@@ -1490,7 +1501,9 @@ if (s === '已完成') { t.done = true; t.stage = '已完成'; t.completedOn = f
         created.sort(function (a, b) { return (a.done - b.done) || (b.created - a.created); });
         var backlog = state.tasks.filter(function (t) { return !t.done && createdDay(t) < iso; }).filter(function (t) { return t.stage !== '待办'; });
         backlog.sort(function (a, b) { return ddlKey(a) < ddlKey(b) ? -1 : 1; });
-        return { created: created, backlog: backlog };
+        var todos = state.tasks.filter(function (t) { return t.stage === '待办' && !t.done && createdDay(t) <= iso; });
+        todos.sort(function (a, b) { return ddlKey(a) < ddlKey(b) ? -1 : 1; });
+        return { created: created, backlog: backlog, todos: todos };
       }
       function modalRow(t) {
         return '<div class="modal-task' + (t.done ? ' done' : '') + '" data-id="' + t.id + '">'
@@ -1499,11 +1512,13 @@ if (s === '已完成') { t.done = true; t.stage = '已完成'; t.completedOn = f
           + '</div>';
       }
        var modalDate = null;
-       function msItem(label, arr) {
-         return '<div class="ms-item"><div class="ms-label">' + label + '</div><div class="ms-num">' + arr.length + '</div>'
-           + (arr.length ? '<div class="ms-titles">' + arr.map(function (x) { return esc(x.title); }).join('、') + '</div>' : '')
-           + '</div>';
-       }
+        function msItem(label, arr) {
+          return '<div class="ms-item"><div class="ms-label">' + label + '</div><div class="ms-num">' + arr.length + '</div>'
+            + (arr.length ? '<div class="ms-titles">' + arr.map(function (x) {
+                return '<div class="ms-t" title="点击展开全称">' + esc(x.title) + '</div>';
+              }).join('') + '</div>' : '')
+            + '</div>';
+        }
         function openDayModal(iso) {
           modalDate = iso;
           var lists = dayTasksFor(iso);
@@ -1513,16 +1528,17 @@ if (s === '已完成') { t.done = true; t.stage = '已完成'; t.completedOn = f
           var sum = daySummary(iso);
           var p = iso.split('-');
           document.getElementById('mTitle').textContent = (+p[1]) + ' 月 ' + (+p[2]) + ' 日 · 任务清单';
-          document.getElementById('mSub').textContent = '共 ' + total + ' 项 · 历史未完成 ' + lists.backlog.length + ' · 当天新建 ' + lists.created.length
+          document.getElementById('mSub').textContent = '共 ' + (total + lists.todos.length) + ' 项 · 正在进行 ' + lists.backlog.length + ' · 当天新建 ' + lists.created.length
+            + ' · 待办 ' + lists.todos.length
             + (fixeds.length ? ' · 固定日程 ' + fixeds.length : '');
           var html = '<div class="m-summary">'
             + msItem('推进', sum.advanced) + msItem('新增', sum.created) + msItem('完成', sum.done)
             + '</div>';
-          if (!total && !fixeds.length) {
+          if (!total && !fixeds.length && !lists.todos.length) {
             html += '<div class="m-empty" style="margin-top:14px;">这一天没有任务</div>';
           } else {
             if (lists.backlog.length) {
-              html += '<div class="m-group">历史未完成 · <b>' + lists.backlog.length + '</b></div>'
+              html += '<div class="m-group">正在进行 · <b>' + lists.backlog.length + '</b></div>'
                 + lists.backlog.map(modalRow).join('');
             }
             if (lists.created.length) {
@@ -1535,6 +1551,10 @@ if (s === '已完成') { t.done = true; t.stage = '已完成'; t.completedOn = f
                     return '<div class="modal-task fixed"><div class="mt-title">↻ ' + esc(f.title) + '</div>'
                       + '<div class="mt-meta"><span class="chip">' + esc(fixedLabel(f)) + '</span></div></div>';
                   }).join('');
+            }
+            if (lists.todos.length) {
+              html += '<div class="m-group m-toggle" id="mTodoToggle" role="button" tabindex="0" aria-expanded="false" aria-controls="mTodoList" data-od-id="day-modal-todo-toggle">待办 · <b>' + lists.todos.length + '</b><span class="m-arrow" aria-hidden="true">▸</span></div>'
+                + '<div id="mTodoList" hidden>' + lists.todos.map(modalRow).join('') + '</div>';
             }
           }
           html += '<div class="m-group">当日事项记录 · <b>' + notes.length + '</b></div>'
@@ -1559,11 +1579,64 @@ if (s === '已完成') { t.done = true; t.stage = '已完成'; t.completedOn = f
          var ni = document.getElementById('noteInput');
          if (ni) ni.focus();
        }
-       function closeDayModal() { modalMask.hidden = true; modalDate = null; }
+        function closeDayModal() {
+          modalMask.hidden = true;
+          modalDate = null;
+          dayModalBox.style.position = '';
+          dayModalBox.style.left = '';
+          dayModalBox.style.top = '';
+          dayModalBox.style.margin = '';
+        }
+        var dayModalBox = document.getElementById('dayModalBox');
+        var dayModalHead = dayModalBox.querySelector('.modal-head');
+        var dragOff = null;
+        dayModalHead.addEventListener('pointerdown', function (e) {
+          if (e.target.closest('.modal-close')) return;
+          if (e.pointerType === 'mouse' && e.button !== 0) return;
+          var r = dayModalBox.getBoundingClientRect();
+          dragOff = { dx: e.clientX - r.left, dy: e.clientY - r.top };
+          dayModalBox.style.position = 'fixed';
+          dayModalBox.style.left = r.left + 'px';
+          dayModalBox.style.top = r.top + 'px';
+          dayModalBox.style.margin = '0';
+          dayModalHead.classList.add('dragging');
+          dayModalHead.setPointerCapture(e.pointerId);
+          e.preventDefault();
+        });
+        dayModalHead.addEventListener('pointermove', function (e) {
+          if (!dragOff) return;
+          var maxX = Math.max(0, window.innerWidth - dayModalBox.offsetWidth);
+          var maxY = Math.max(0, window.innerHeight - dayModalBox.offsetHeight);
+          var x = Math.min(Math.max(e.clientX - dragOff.dx, 0), maxX);
+          var y = Math.min(Math.max(e.clientY - dragOff.dy, 0), maxY);
+          dayModalBox.style.left = x + 'px';
+          dayModalBox.style.top = y + 'px';
+        });
+        function endDayDrag() {
+          if (!dragOff) return;
+          dragOff = null;
+          dayModalHead.classList.remove('dragging');
+        }
+        dayModalHead.addEventListener('pointerup', endDayDrag);
+        dayModalHead.addEventListener('pointercancel', endDayDrag);
        document.getElementById('mClose').addEventListener('click', closeDayModal);
        modalMask.addEventListener('click', function (e) { if (e.target === modalMask) closeDayModal(); });
        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modalMask.hidden) closeDayModal(); });
-        document.getElementById('mBody').addEventListener('click', function (e) {
+         document.getElementById('mBody').addEventListener('click', function (e) {
+           var tog = e.target.closest('#mTodoToggle');
+           if (tog) {
+             var lst = document.getElementById('mTodoList');
+             var expanded = tog.getAttribute('aria-expanded') === 'true';
+             tog.setAttribute('aria-expanded', String(!expanded));
+             if (lst) lst.hidden = expanded;
+             return;
+           }
+           var msT = e.target.closest('.ms-t');
+           if (msT) {
+             var msExp = msT.classList.toggle('expanded');
+             msT.setAttribute('title', msExp ? '点击收起' : '点击展开全称');
+             return;
+           }
 if (e.target.closest('#noteAdd')) { addNoteFromModal(); return; }
            var nedit = e.target.closest('[data-noteedit]');
            if (nedit && nedit.getAttribute('contenteditable') !== 'true') {
@@ -1583,10 +1656,17 @@ if (e.target.closest('#noteAdd')) { addNoteFromModal(); return; }
           }
           var row = e.target.closest('.modal-task');
           if (!row || row.classList.contains('fixed')) return;
-         var id = row.getAttribute('data-id');
-         closeDayModal();
-         selectTaskLocate(id);
-       });
+          var id = row.getAttribute('data-id');
+          closeDayModal();
+          selectTaskLocate(id);
+        });
+        document.getElementById('mBody').addEventListener('keydown', function (e) {
+          if (e.key !== 'Enter' && e.key !== ' ') return;
+          var tog = e.target.closest ? e.target.closest('#mTodoToggle') : null;
+          if (!tog) return;
+          e.preventDefault();
+          tog.click();
+        });
 document.getElementById('mBody').addEventListener('keydown', function (e) {
           if (e.key === 'Enter' && e.target.id === 'noteInput') addNoteFromModal();
         });
