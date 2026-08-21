@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>流程待办 · Flow Board — 原型 v0.7.0</title>
+  <title>流程待办 · Flow Board — 原型 v0.7.1</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=DM+Serif+Display&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@700;900&family=Zhi+Mang+Xing+You&display=swap" rel="stylesheet" />
@@ -173,6 +173,7 @@
      .list-head .count { font: 13px/1 var(--mono); color: var(--pencil); letter-spacing: 0.1em; }
      .search-input { flex: 0 1 220px; min-width: 140px; min-height: 36px; border: 2px solid var(--pencil); border-radius: 999px; padding: 6px 14px; font: 14px/1 var(--hand); background: var(--paper); color: var(--ink); }
      .search-input:focus { outline: none; border-color: var(--ink); background: var(--highlight); }
+     .search-input.on { border-color: var(--accent-text); background: var(--highlight); box-shadow: 3px 3px 0 -1px rgba(43,38,32,0.25); }
      .search-input::placeholder { color: var(--pencil); opacity: 0.7; }
     .head-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
     .head-actions .btn-ghost { padding: 8px 12px; font-size: 14px; }
@@ -445,7 +446,7 @@
   <div class="page">
     <div class="head" data-od-id="head">
       <h1><em>流程待办 · Flow Board</em>
-        <span class="pin"><span class="x"></span>原型 v0.7.0</span>
+        <span class="pin"><span class="x"></span>原型 v0.7.1</span>
       </h1>
       <div class="sub">记录流程节点 · 盯紧 DDL · 关联产出位置 · 引导补全要点</div>
       <div class="meta"><b>更新</b> <span id="todayLabel">—</span> · <b>DEVICE</b> DESKTOP 1440 · <b>FIDELITY</b> HIGH</div>
@@ -634,7 +635,7 @@
     (function () {
        var STAGES = ['待办', '进行中', '已完成'];
       var KEY = 'flow-todo-v1';
-      var APP_VERSION = '0.7.0';
+      var APP_VERSION = '0.7.1';
       var VERSION_URL = 'https://shadowwitheagle.github.io/todo-flow/version.json';
       var FIELDS = [
         { key: 'goal', label: '目标', hint: '这个任务要达成什么结果？一句话即可', required: true, multiline: true },
@@ -788,11 +789,16 @@
 
       /* ---------- render: nav ---------- */
       var navEl = document.getElementById('stageNav');
+      function taskMatches(t, q) {
+        return [t.title, t.goal, t.acceptance, t.output, t.note].join('\n').toLowerCase().indexOf(q) !== -1;
+      }
       function renderNav() {
         var items = [{ key: 'all', label: '全部' }]
           .concat(STAGES.map(function (s) { return { key: s, label: s }; }));
+        var q = (state.q || '').trim().toLowerCase();
+        var pool = q ? state.tasks.filter(function (t) { return taskMatches(t, q); }) : state.tasks;
         navEl.innerHTML = items.map(function (it) {
-          var cnt = state.tasks.filter(function (t) {
+          var cnt = pool.filter(function (t) {
             if (it.key === 'all') return !t.done;
             return t.stage === it.key;
           }).length;
@@ -842,12 +848,10 @@
            if (state.filter === 'all') return true;
            return t.stage === state.filter;
          });
-         var q = (state.q || '').trim().toLowerCase();
-         if (q) {
-           arr = arr.filter(function (t) {
-             return [t.title, t.goal, t.acceptance, t.output, t.note].join('\n').toLowerCase().indexOf(q) !== -1;
-           });
-         }
+          var q = (state.q || '').trim().toLowerCase();
+          if (q) {
+            arr = arr.filter(function (t) { return taskMatches(t, q); });
+          }
         var undone = arr.filter(function (t) { return !t.done; });
         var done = arr.filter(function (t) { return t.done; });
         if (state.sort) {
@@ -943,12 +947,14 @@
          state.sort = !state.sort;
          save(); renderList(); renderDrawer();
        });
-       var searchInput = document.getElementById('searchInput');
-       searchInput.value = state.q || '';
-       searchInput.addEventListener('input', function () {
-         state.q = searchInput.value;
-         save(); renderList(); renderDrawer();
-       });
+        var searchInput = document.getElementById('searchInput');
+        searchInput.value = state.q || '';
+        searchInput.classList.toggle('on', !!(state.q || '').trim());
+        searchInput.addEventListener('input', function () {
+          state.q = searchInput.value;
+          searchInput.classList.toggle('on', !!searchInput.value.trim());
+          save(); renderNav(); renderList(); renderDrawer();
+        });
 
       /* ---------- backup: export / import ---------- */
       function downloadBlob(name, text, type) {
