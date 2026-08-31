@@ -1,9 +1,9 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>流程待办 · Flow Board — 原型 v0.7.1</title>
+  <title>流程待办 · Flow Board — 原型 v0.7.4</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&family=DM+Serif+Display&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@700;900&family=Zhi+Mang+Xing+You&display=swap" rel="stylesheet" />
@@ -62,6 +62,27 @@
 
     .persist-warn { margin: 0 0 16px; padding: 10px 14px; border: 1.5px dashed var(--accent-text); border-radius: 10px; color: var(--accent-text); font: 15px/1.5 var(--hand); background: color-mix(in oklch, var(--highlight), transparent 70%); }
     .persist-warn[hidden] { display: none; }
+
+    /* ---------- local file sync ---------- */
+    .sync-warn { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin: 0 0 16px; padding: 12px 14px; border: 2px solid var(--ink); border-radius: 10px; background: var(--highlight); box-shadow: 4px 5px 0 -3px rgba(43,38,32,0.18); }
+    .sync-warn[hidden] { display: none; }
+    .sync-warn .sw-text { flex: 1 1 240px; font: 16px/1.5 var(--hand); color: var(--pencil); }
+    .sync-warn .sw-text strong { display: block; font: 700 19px/1.3 var(--serif); color: var(--accent-deep); margin-bottom: 2px; }
+    .sync-warn .sw-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .sync-warn .sw-btn { font: 600 14px/1 var(--hand); padding: 10px 16px; border: 2px solid var(--accent-deep); border-radius: 8px; color: var(--accent-deep); background: transparent; box-shadow: 2px 3px 0 rgba(43,38,32,0.18); cursor: pointer; }
+    .sync-warn .sw-btn:hover { background: rgba(43,38,32,0.06); transform: translate(-1px,-1px); box-shadow: 3px 4px 0 rgba(43,38,32,0.18); }
+    .sync-warn .sw-btn-primary { color: var(--paper); background: var(--accent-deep); }
+    .sync-warn .sw-btn-primary:hover { background: color-mix(in oklch, var(--accent-deep), #000 12%); }
+    .sync-warn .sw-close { border: none; background: transparent; color: var(--pencil); font: 18px/1 var(--hand); cursor: pointer; padding: 8px; border-radius: 8px; }
+    .sync-warn .sw-close:hover { color: var(--ink); background: rgba(43,38,32,0.06); }
+    #syncBtn.sync-on { border-color: var(--accent-text); color: var(--accent-text); background: color-mix(in oklch, var(--highlight), transparent 55%); }
+    .sync-info { display: flex; flex-direction: column; gap: 8px; font: 15px/1.5 var(--hand); color: var(--pencil); }
+    .sync-info .si-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; border-bottom: 1px dashed var(--rule); padding-bottom: 6px; }
+    .sync-info .si-row b { color: var(--ink); font-weight: 600; text-align: right; word-break: break-all; }
+    .sync-badge { display: inline-block; font: 12px/1 var(--mono); letter-spacing: 0.08em; padding: 4px 8px; border-radius: 999px; border: 1.5px solid var(--pencil); color: var(--pencil); }
+    .sync-badge.on { border-color: var(--accent-text); color: var(--accent-text); background: color-mix(in oklch, var(--highlight), transparent 60%); }
+    .sync-actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+    .sync-actions .btn-primary, .sync-actions .btn-ghost { flex: 1 1 auto; text-align: center; }
 
     /* ---------- update banner ---------- */
     .update-warn { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin: 0 0 16px; padding: 12px 14px; border: 2px solid var(--ink); border-radius: 10px; background: var(--note-yellow); box-shadow: 4px 5px 0 -3px rgba(43,38,32,0.18); }
@@ -402,8 +423,9 @@
     .fx-item .fx-rule { font: 12px/1 var(--mono); color: var(--pencil); margin-top: 3px; }
     .fx-del { flex-shrink: 0; min-height: 32px; padding: 4px 10px; border: 1.5px solid var(--pencil); border-radius: 7px; background: var(--paper); font: 13px/1 var(--hand); color: var(--pencil); cursor: pointer; }
     .fx-del:hover { border-color: var(--accent-text); color: var(--accent-text); }
-    .modal-task.fixed { cursor: default; border-style: dashed; }
-    .modal-task.fixed:hover { border-color: var(--pencil); background: var(--paper); }
+    .modal-task.fixed { cursor: pointer; border-style: dashed; }
+    .modal-task.fixed:hover { border-color: var(--ink); background: var(--highlight); }
+    .fx-item.editing { border-style: solid; border-color: var(--ink); background: var(--highlight); }
 
     /* ---------- fixed panel (常驻清单) ---------- */
     .fx-panel { margin-top: 18px; border: 2px dashed var(--pencil); border-radius: 12px; padding: 12px 14px; background: var(--paper); }
@@ -446,7 +468,7 @@
   <div class="page">
     <div class="head" data-od-id="head">
       <h1><em>流程待办 · Flow Board</em>
-        <span class="pin"><span class="x"></span>原型 v0.7.1</span>
+        <span class="pin"><span class="x"></span>原型 v0.7.4</span>
       </h1>
       <div class="sub">记录流程节点 · 盯紧 DDL · 关联产出位置 · 引导补全要点</div>
       <div class="meta"><b>更新</b> <span id="todayLabel">—</span> · <b>DEVICE</b> DESKTOP 1440 · <b>FIDELITY</b> HIGH</div>
@@ -468,6 +490,15 @@
         <button class="uw-btn uw-btn-primary" id="uwLink" type="button">下载新版</button>
       </div>
       <button class="uw-close" id="uwClose" aria-label="关闭更新提示">✕</button>
+    </div>
+
+    <div class="sync-warn" id="syncWarn" data-od-id="sync-warn" hidden>
+      <div class="sw-text"><strong id="swTitle">检测到本机备份</strong><span id="swDesc"></span></div>
+      <div class="sw-actions">
+        <button class="sw-btn" id="swSecondary" type="button">忽略</button>
+        <button class="sw-btn sw-btn-primary" id="swPrimary" type="button">恢复备份</button>
+      </div>
+      <button class="sw-close" id="swClose" aria-label="关闭同步提示">✕</button>
     </div>
 
     <div class="canvas" data-od-id="canvas">
@@ -496,6 +527,7 @@
             <div class="head-actions">
               <button type="button" class="btn-ghost" id="sortBtn" data-od-id="sort-ddl" aria-pressed="false">按 DDL 排序</button>
               <button type="button" class="btn-ghost" id="fixedBtn" data-od-id="fixed-btn" title="管理每周 / 每月固定重复的日程">固定日程</button>
+              <button type="button" class="btn-ghost" id="syncBtn" data-od-id="sync-btn" title="把数据自动同步到一个本机文件，清除浏览器缓存后也能找回">本机同步</button>
               <button type="button" class="btn-ghost" id="exportBtn" data-od-id="export" title="把全部任务备份成本地 JSON 文件">导出</button>
               <button type="button" class="btn-ghost" id="importBtn" data-od-id="import" title="从备份 JSON 文件恢复">导入</button>
               <input type="file" id="importFile" accept="application/json,.json" hidden />
@@ -554,6 +586,29 @@
         </div>
       </div>
     </div>
+    <div class="modal-mask" id="syncModal" hidden>
+      <div class="modal modal-sm" role="dialog" aria-modal="true" data-od-id="sync-modal">
+        <div class="modal-head">
+          <div>
+            <h4>本机数据同步</h4>
+            <div class="m-sub">选定一个本机 JSON 文件后，每次打开网页自动检测备份、关闭网页自动写入；即使清除浏览器缓存，也能从该文件找回数据</div>
+          </div>
+          <button type="button" class="modal-close" id="syClose" aria-label="关闭">✕</button>
+        </div>
+        <div class="sync-info" id="syBody">
+          <div class="si-row"><span>状态</span><span class="sync-badge" id="syBadge">未开启</span></div>
+          <div class="si-row"><span>同步文件</span><b id="syFile">—</b></div>
+          <div class="si-row"><span>最近同步</span><b id="syLast">—</b></div>
+          <div class="rep-hint" id="syHint">同步完全在本机进行，数据不经过任何服务器。更换浏览器或电脑时，把同步文件拷过去再「从文件恢复」即可。</div>
+        </div>
+        <div class="sync-actions">
+          <button type="button" class="btn-ghost danger" id="syDisable" data-od-id="sync-disable" hidden>关闭同步</button>
+          <button type="button" class="btn-ghost" id="syRestore" data-od-id="sync-restore" hidden>从文件恢复</button>
+          <button type="button" class="btn-ghost" id="syNow" data-od-id="sync-now" hidden>立即同步</button>
+          <button type="button" class="btn-primary" id="syEnable" data-od-id="sync-enable">选择本机文件并开启</button>
+        </div>
+      </div>
+    </div>
     <div class="modal-mask" id="fixedModal" hidden>
       <div class="modal" role="dialog" aria-modal="true" data-od-id="fixed-modal">
         <div class="modal-head">
@@ -587,6 +642,7 @@
           </div>
           <div class="fx-row">
             <button type="button" class="btn-primary" id="fxAdd" data-od-id="fixed-add">＋ 添加固定日程</button>
+            <button type="button" class="btn-ghost" id="fxCancelEdit" data-od-id="fixed-cancel-edit" hidden>取消编辑</button>
           </div>
         </div>
         <div class="fx-list" id="fxList"></div>
@@ -635,7 +691,7 @@
     (function () {
        var STAGES = ['待办', '进行中', '已完成'];
       var KEY = 'flow-todo-v1';
-      var APP_VERSION = '0.7.1';
+      var APP_VERSION = '0.7.4';
       var VERSION_URL = 'https://shadowwitheagle.github.io/todo-flow/version.json';
       var FIELDS = [
         { key: 'goal', label: '目标', hint: '这个任务要达成什么结果？一句话即可', required: true, multiline: true },
@@ -681,10 +737,12 @@
         try { localStorage.setItem('__ft_test', '1'); localStorage.removeItem('__ft_test'); return true; } catch (e) { return false; }
       })();
       var state = null;
+      var localWasEmpty = false;
       if (storageOK) {
         try { state = JSON.parse(localStorage.getItem(KEY)); } catch (e) { state = null; }
       }
       if (!state || !Array.isArray(state.tasks)) {
+        localWasEmpty = true;
         state = { tasks: seed(), fixed: seedFixed(), filter: 'all', sort: false, selectedId: null };
       }
        if (!Array.isArray(state.fixed)) state.fixed = [];
@@ -701,7 +759,11 @@
        if (state.filter === 'done') state.filter = '已完成';
        if (state.filter === '代办/进行中') state.filter = '进行中';
       if (state.filter !== 'all' && STAGES.indexOf(state.filter) === -1) state.filter = 'all';
-      function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+      function save() {
+        state.savedAt = Date.now();
+        try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+        /* 本机同步不在此触发：只在打开 / 关闭网页时读写同步文件 */
+      }
       save();
 
       function fmtISO(d) {
@@ -1518,6 +1580,7 @@ if (s === '已完成') { t.done = true; t.stage = '已完成'; t.completedOn = f
           + '</div>';
       }
        var modalDate = null;
+        var noteDrafts = {};
         function msItem(label, arr) {
           return '<div class="ms-item"><div class="ms-label">' + label + '</div><div class="ms-num">' + arr.length + '</div>'
             + (arr.length ? '<div class="ms-titles">' + arr.map(function (x) {
@@ -1554,7 +1617,7 @@ if (s === '已完成') { t.done = true; t.stage = '已完成'; t.completedOn = f
             if (fixeds.length) {
               html += '<div class="m-group">固定日程 · <b>' + fixeds.length + '</b></div>'
                 + fixeds.map(function (f) {
-                    return '<div class="modal-task fixed"><div class="mt-title">↻ ' + esc(f.title) + '</div>'
+                    return '<div class="modal-task fixed" data-fxid="' + f.id + '" title="点击编辑这条固定日程"><div class="mt-title">↻ ' + esc(f.title) + '</div>'
                       + '<div class="mt-meta"><span class="chip">' + esc(fixedLabel(f)) + '</span></div></div>';
                   }).join('');
             }
@@ -1564,7 +1627,7 @@ if (s === '已完成') { t.done = true; t.stage = '已完成'; t.completedOn = f
             }
           }
           html += '<div class="m-group">当日事项记录 · <b>' + notes.length + '</b></div>'
-            + '<div class="note-form"><input id="noteInput" type="text" placeholder="随手记一条，回车保存到这一天" autocomplete="off" />'
+            + '<div class="note-form"><input id="noteInput" type="text" value="' + esc(noteDrafts[iso] || '') + '" placeholder="随手记一条，回车保存；未保存的草稿关闭后自动保留" autocomplete="off" />'
             + '<button type="button" class="btn-ghost" id="noteAdd">记下</button></div>'
             + notes.map(function (n) {
                 return '<div class="note-item"><span class="n-text" data-noteedit="' + n.id + '" title="点击编辑，回车保存">' + esc(n.text) + '</span>'
@@ -1579,6 +1642,7 @@ if (s === '已完成') { t.done = true; t.stage = '已完成'; t.completedOn = f
          var v = inp.value.trim();
          if (!v) { inp.focus(); return; }
          state.notes.push({ id: uid(), date: modalDate, text: v, ts: Date.now() });
+         delete noteDrafts[modalDate];
          save();
          openDayModal(modalDate);
          if (state.view === 'cal') renderCal();
@@ -1661,7 +1725,14 @@ if (e.target.closest('#noteAdd')) { addNoteFromModal(); return; }
             return;
           }
           var row = e.target.closest('.modal-task');
-          if (!row || row.classList.contains('fixed')) return;
+          if (!row) return;
+          if (row.classList.contains('fixed')) {
+            var fid = row.getAttribute('data-fxid');
+            if (!fid) return;
+            closeDayModal();
+            openFixedModal(fid);
+            return;
+          }
           var id = row.getAttribute('data-id');
           closeDayModal();
           selectTaskLocate(id);
@@ -1672,6 +1743,9 @@ if (e.target.closest('#noteAdd')) { addNoteFromModal(); return; }
           if (!tog) return;
           e.preventDefault();
           tog.click();
+        });
+        document.getElementById('mBody').addEventListener('input', function (e) {
+          if (e.target.id === 'noteInput' && modalDate) noteDrafts[modalDate] = e.target.value;
         });
 document.getElementById('mBody').addEventListener('keydown', function (e) {
           if (e.key === 'Enter' && e.target.id === 'noteInput') addNoteFromModal();
@@ -1772,6 +1846,9 @@ document.getElementById('mBody').addEventListener('keydown', function (e) {
           pop.innerHTML = html;
         }
         pop.addEventListener('click', function (e) {
+          // 弹层内部的点击不冒泡到 document：renderPop() 会摘除被点按钮，
+          // 否则 document 的“外部点击关闭”逻辑会因 target 已脱离 DOM 而误关弹层
+          e.stopPropagation();
           var nav = e.target.closest('[data-dpnav]');
           if (nav) {
             var m = view.m + (+nav.getAttribute('data-dpnav')), y = view.y;
@@ -1815,15 +1892,47 @@ document.getElementById('mBody').addEventListener('keydown', function (e) {
            return;
          }
          list.innerHTML = state.fixed.map(function (f) {
-           return '<div class="fx-item"><div><div class="fx-title">' + esc(f.title) + '</div>'
+           return '<div class="fx-item' + (f.id === fxEditingId ? ' editing' : '') + '"><div><div class="fx-title">' + esc(f.title) + '</div>'
              + '<div class="fx-rule">' + esc(fixedLabel(f)) + '</div></div>'
              + '<button type="button" class="fx-del" data-fxdel="' + f.id + '">删除</button></div>';
          }).join('');
        }
-       function closeFixedModal() { fixedModal.hidden = true; }
-       document.getElementById('fixedBtn').addEventListener('click', function () {
+       var fxEditingId = null;
+       function setFxEditing(id) {
+         var f = id ? state.fixed.find(function (x) { return x.id === id; }) : null;
+         fxEditingId = f ? f.id : null;
+         fxType = f ? f.type : 'weekly';
+         var typeBtns = document.querySelectorAll('#fxTypes .fx-type');
+         for (var i = 0; i < typeBtns.length; i++) typeBtns[i].classList.toggle('on', typeBtns[i].getAttribute('data-fxtype') === fxType);
+         document.getElementById('fxWeeklyRow').hidden = fxType !== 'weekly';
+         document.getElementById('fxMonthlyRow').hidden = fxType !== 'monthly';
+         fxDowSet = {};
+         if (f && f.type === 'weekly') (f.dows || []).forEach(function (d) { fxDowSet[d] = true; });
+         var dowBtns = fxDowsEl.querySelectorAll('.fx-dow');
+         for (var j = 0; j < dowBtns.length; j++) {
+           var dn = +dowBtns[j].getAttribute('data-dow');
+           dowBtns[j].classList.toggle('on', !!fxDowSet[dn]);
+           dowBtns[j].setAttribute('aria-pressed', fxDowSet[dn] ? 'true' : 'false');
+         }
+         document.getElementById('fxFrom').value = f && f.type === 'monthly' ? f.from : '';
+         document.getElementById('fxTo').value = f && f.type === 'monthly' ? f.to : '';
+         document.getElementById('fxTitle').value = f ? f.title : '';
+         document.getElementById('fxAdd').textContent = f ? '保存修改' : '＋ 添加固定日程';
+         document.getElementById('fxCancelEdit').hidden = !f;
+       }
+       function openFixedModal(editId) {
+         setFxEditing(editId || null);
          renderFxList();
          fixedModal.hidden = false;
+         document.getElementById('fxTitle').focus();
+       }
+       function closeFixedModal() { fixedModal.hidden = true; setFxEditing(null); renderFxList(); }
+       document.getElementById('fixedBtn').addEventListener('click', function () {
+         openFixedModal();
+       });
+       document.getElementById('fxCancelEdit').addEventListener('click', function () {
+         setFxEditing(null);
+         renderFxList();
          document.getElementById('fxTitle').focus();
        });
        document.getElementById('fxClose').addEventListener('click', closeFixedModal);
@@ -1859,19 +1968,24 @@ document.getElementById('mBody').addEventListener('keydown', function (e) {
          var titleEl = document.getElementById('fxTitle');
          var title = titleEl.value.trim();
          if (!title) { titleEl.focus(); return; }
+         var editing = fxEditingId ? state.fixed.find(function (f) { return f.id === fxEditingId; }) : null;
          if (fxType === 'weekly') {
            var dows = [];
            for (var k = 1; k <= 7; k++) { if (fxDowSet[k]) dows.push(k); }
            if (!dows.length) { fxDowsEl.querySelector('.fx-dow').focus(); return; }
-           state.fixed.push({ id: uid(), title: title, type: 'weekly', dows: dows });
+           if (editing) { editing.title = title; editing.type = 'weekly'; editing.dows = dows; delete editing.from; delete editing.to; }
+           else state.fixed.push({ id: uid(), title: title, type: 'weekly', dows: dows });
          } else {
            var from = Math.min(31, Math.max(1, +document.getElementById('fxFrom').value || 1));
            var to = Math.min(31, Math.max(1, +document.getElementById('fxTo').value || 31));
-           state.fixed.push({ id: uid(), title: title, type: 'monthly', from: from, to: to });
+           if (editing) { editing.title = title; editing.type = 'monthly'; editing.from = from; editing.to = to; delete editing.dows; }
+           else state.fixed.push({ id: uid(), title: title, type: 'monthly', from: from, to: to });
          }
-         titleEl.value = '';
-         titleEl.focus();
-         save(); renderFxList(); renderFixedPanel();
+         var wasEditing = !!editing;
+         setFxEditing(null);
+         renderFxList();
+         if (!wasEditing) titleEl.focus();
+         save(); renderFixedPanel();
          if (state.view === 'cal') renderCal();
        });
 
@@ -1887,9 +2001,7 @@ document.getElementById('mBody').addEventListener('keydown', function (e) {
              ? '<div class="fx-panel-list">' + items + '</div>'
              : '<div class="fx-panel-empty">还没有固定日程，点「管理」添加每周 / 每月重复的事项</div>');
          document.getElementById('fxManageBtn').addEventListener('click', function () {
-           renderFxList();
-           fixedModal.hidden = false;
-           document.getElementById('fxTitle').focus();
+           openFixedModal();
          });
        }
 
@@ -1920,6 +2032,242 @@ document.getElementById('mBody').addEventListener('keydown', function (e) {
         save(); renderAll();
         revealDrawer();
       });
+
+      /* ---------- local file sync (optional) ---------- */
+      var syncHandle = null;
+      var syncPerm = 'none'; /* none | granted | prompt | denied */
+      var syncLast = 0;
+      var syncPendingRestore = null;
+      var syncWarn = document.getElementById('syncWarn');
+      var syncModal = document.getElementById('syncModal');
+      function syncSupported() { return 'showSaveFilePicker' in window && !!window.indexedDB; }
+      function idbOpen() {
+        return new Promise(function (res, rej) {
+          var req = indexedDB.open('flow-todo-sync', 1);
+          req.onupgradeneeded = function () { req.result.createObjectStore('kv'); };
+          req.onsuccess = function () { res(req.result); };
+          req.onerror = function () { rej(req.error); };
+        });
+      }
+      function idbCmd(mode, fn) {
+        return idbOpen().then(function (db) {
+          return new Promise(function (res, rej) {
+            var req = fn(db.transaction('kv', mode).objectStore('kv'));
+            req.onsuccess = function () { res(req.result); };
+            req.onerror = function () { rej(req.error); };
+          });
+        });
+      }
+      function idbGet(k) { return idbCmd('readonly', function (st) { return st.get(k); }); }
+      function idbSet(k, v) { return idbCmd('readwrite', function (st) { return st.put(v, k); }); }
+      function idbDel(k) { return idbCmd('readwrite', function (st) { return st.delete(k); }); }
+
+      function syncPayload() {
+        return { app: 'flow-todo', ver: APP_VERSION, exported: fmtISO(new Date()), savedAt: state.savedAt || 0, tasks: state.tasks, fixed: state.fixed, notes: state.notes, log: state.log };
+      }
+      function parseSyncData(text) {
+        var data;
+        try { data = JSON.parse(text); } catch (e) { return null; }
+        if (!data || !Array.isArray(data.tasks)) return null;
+        return data;
+      }
+      function applySyncSnapshot(data) {
+        state.tasks = data.tasks.filter(function (t) { return t && t.id; });
+        state.fixed = Array.isArray(data.fixed) ? data.fixed.filter(function (f) { return f && f.id; }) : [];
+        state.notes = Array.isArray(data.notes) ? data.notes.filter(function (n) { return n && n.id && n.date; }) : [];
+        if (Array.isArray(data.log)) state.log = data.log;
+        state.tasks.forEach(function (t) {
+          if (STAGE_MIGRATE[t.stage]) t.stage = STAGE_MIGRATE[t.stage];
+          if (t.done) t.stage = '已完成';
+          if (t.stage === '已完成') t.done = true;
+        });
+        state.selectedId = null;
+        save(); renderAll();
+      }
+
+      function fmtTime(ts) {
+        if (!ts) return '—';
+        var d = new Date(ts);
+        return fmtISO(d) + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+      }
+      function updateSyncUI() {
+        var on = !!syncHandle;
+        document.getElementById('syncBtn').classList.toggle('sync-on', on && syncPerm === 'granted');
+        var badge = document.getElementById('syBadge');
+        badge.classList.toggle('on', on && syncPerm === 'granted');
+        badge.textContent = !on ? '未开启'
+          : syncPerm === 'granted' ? '同步中'
+          : syncPerm === 'prompt' ? '待重新授权' : '无写入权限';
+        document.getElementById('syFile').textContent = on ? (syncHandle.name || '本机文件') : '—';
+        document.getElementById('syLast').textContent = fmtTime(syncLast);
+        document.getElementById('syEnable').textContent = on ? '更换同步文件' : '选择本机文件并开启';
+        document.getElementById('syDisable').hidden = !on;
+        document.getElementById('syRestore').hidden = !on;
+        document.getElementById('syNow').hidden = !(on && syncPerm === 'granted');
+        var enableBtn = document.getElementById('syEnable');
+        var hint = document.getElementById('syHint');
+        if (!syncSupported()) {
+          enableBtn.hidden = true;
+          hint.textContent = '当前浏览器不支持本机文件同步（需要 Chrome / Edge 等 Chromium 内核浏览器）。仍可随时用「导出 / 导入」手动备份。';
+        } else {
+          enableBtn.hidden = false;
+          hint.textContent = '同步完全在本机进行，数据不经过任何服务器。打开网页时自动比对备份，关闭网页时自动写入；也可随时点「立即同步」。更换浏览器或电脑时，把同步文件拷过去再「从文件恢复」即可。';
+        }
+      }
+
+      function writeSyncFile() {
+        if (!syncHandle || syncPerm !== 'granted') return Promise.resolve(false);
+        return syncHandle.createWritable()
+          .then(function (w) { return w.write(JSON.stringify(syncPayload(), null, 2)).then(function () { return w.close(); }); })
+          .then(function () { syncLast = Date.now(); updateSyncUI(); return true; })
+          .catch(function (err) {
+            if (err && err.name === 'NotAllowedError') {
+              syncPerm = 'prompt';
+              updateSyncUI();
+              showSyncWarn('reauth');
+            }
+            return false;
+          });
+      }
+
+      /* 关闭 / 切走网页时把最新数据写入同步文件（打开时的检测见 bootSyncCompare） */
+      window.addEventListener('pagehide', function () { writeSyncFile(); });
+      document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'hidden') writeSyncFile();
+      });
+
+      function showSyncWarn(kind, data) {
+        var title = document.getElementById('swTitle');
+        var desc = document.getElementById('swDesc');
+        var primary = document.getElementById('swPrimary');
+        var secondary = document.getElementById('swSecondary');
+        if (kind === 'restore') {
+          syncPendingRestore = data;
+          title.textContent = '检测到本机同步备份';
+          desc.textContent = '「' + (syncHandle ? syncHandle.name : '同步文件') + '」中有 ' + data.tasks.length + ' 个任务（' + fmtTime(data.savedAt) + ' 更新），'
+            + (localWasEmpty ? '浏览器里的数据似乎刚被清空，可以一键找回。' : '比当前浏览器里的数据更新。');
+          primary.textContent = '恢复本机备份';
+          secondary.textContent = '忽略，保留当前数据';
+        } else {
+          syncPendingRestore = null;
+          title.textContent = '本机同步需要重新授权';
+          desc.textContent = '浏览器重置了对「' + (syncHandle ? syncHandle.name : '同步文件') + '」的访问权限，授权后即可继续自动同步。';
+          primary.textContent = '重新授权';
+          secondary.textContent = '暂不同步';
+        }
+        primary.setAttribute('data-mode', kind);
+        syncWarn.hidden = false;
+      }
+      function hideSyncWarn() { syncWarn.hidden = true; syncPendingRestore = null; }
+      document.getElementById('swClose').addEventListener('click', hideSyncWarn);
+      document.getElementById('swSecondary').addEventListener('click', function () {
+        /* 恢复提示中选择保留当前数据：把当前数据写回文件，让两边一致 */
+        var wasRestore = document.getElementById('swPrimary').getAttribute('data-mode') === 'restore';
+        hideSyncWarn();
+        if (wasRestore) writeSyncFile();
+      });
+      document.getElementById('swPrimary').addEventListener('click', function () {
+        var mode = this.getAttribute('data-mode');
+        if (mode === 'restore') {
+          var data = syncPendingRestore;
+          hideSyncWarn();
+          if (data) applySyncSnapshot(data);
+        } else if (syncHandle) {
+          syncHandle.requestPermission({ mode: 'readwrite' }).then(function (p) {
+            syncPerm = p;
+            updateSyncUI();
+            if (p === 'granted') { hideSyncWarn(); bootSyncCompare(); }
+          });
+        } else {
+          hideSyncWarn();
+        }
+      });
+
+      function bootSyncCompare() {
+        if (!syncHandle || syncPerm !== 'granted') return;
+        syncHandle.getFile().then(function (f) { return f.text(); }).then(function (text) {
+          var data = parseSyncData(text);
+          if (data && (localWasEmpty || (data.savedAt || 0) > (state.savedAt || 0))) {
+            showSyncWarn('restore', data);
+          } else {
+            writeSyncFile();
+          }
+        }).catch(function () {});
+      }
+
+      function closeSyncModal() { syncModal.hidden = true; }
+      document.getElementById('syncBtn').addEventListener('click', function () {
+        updateSyncUI();
+        syncModal.hidden = false;
+      });
+      document.getElementById('syClose').addEventListener('click', closeSyncModal);
+      syncModal.addEventListener('click', function (e) { if (e.target === syncModal) closeSyncModal(); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !syncModal.hidden) closeSyncModal(); });
+      document.getElementById('syEnable').addEventListener('click', function () {
+        if (!syncSupported()) return;
+        window.showSaveFilePicker({
+          suggestedName: 'todo-flow-backup.json',
+          types: [{ description: 'JSON 备份', accept: { 'application/json': ['.json'] } }]
+        }).then(function (h) {
+          syncHandle = h;
+          syncPerm = 'granted';
+          return idbSet('handle', h).catch(function () {}).then(function () {
+            updateSyncUI();
+            /* 选到已有备份文件时先读内容，避免用空数据覆盖旧备份 */
+            return h.getFile().then(function (f) { return f.text(); }).then(function (text) {
+              var data = parseSyncData(text);
+              if (data && (localWasEmpty || (data.savedAt || 0) > (state.savedAt || 0))) {
+                closeSyncModal();
+                showSyncWarn('restore', data);
+              } else {
+                writeSyncFile();
+              }
+            }).catch(function () { writeSyncFile(); });
+          });
+        }).catch(function () { /* 用户取消选择 */ });
+      });
+      document.getElementById('syNow').addEventListener('click', function () { writeSyncFile(); });
+      document.getElementById('syRestore').addEventListener('click', function () {
+        if (!syncHandle) return;
+        var btn = this;
+        syncHandle.requestPermission({ mode: 'readwrite' }).then(function (p) {
+          syncPerm = p;
+          updateSyncUI();
+          if (p !== 'granted') return;
+          syncHandle.getFile().then(function (f) { return f.text(); }).then(function (text) {
+            var data = parseSyncData(text);
+            if (!data || !data.tasks.length) {
+              btn.textContent = '文件无效';
+              setTimeout(function () { btn.textContent = '从文件恢复'; }, 1500);
+              return;
+            }
+            closeSyncModal();
+            showSyncWarn('restore', data);
+          }).catch(function () {});
+        });
+      });
+      document.getElementById('syDisable').addEventListener('click', function () {
+        syncHandle = null; syncPerm = 'none'; syncLast = 0;
+        idbDel('handle').catch(function () {});
+        updateSyncUI();
+        closeSyncModal();
+      });
+
+      /* 启动时自动重连上次选定的同步文件 */
+      if (syncSupported()) {
+        idbGet('handle').then(function (h) {
+          if (!h) { updateSyncUI(); return; }
+          syncHandle = h;
+          h.queryPermission({ mode: 'readwrite' }).then(function (p) {
+            syncPerm = p;
+            updateSyncUI();
+            if (p === 'granted') bootSyncCompare();
+            else if (p === 'prompt') showSyncWarn('reauth');
+          });
+        }).catch(function () { updateSyncUI(); });
+      } else {
+        updateSyncUI();
+      }
 
       /* ---------- boot ---------- */
       var now = new Date();
