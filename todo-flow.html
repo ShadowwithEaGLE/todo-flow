@@ -55,6 +55,8 @@
     .kpi .value { font: 900 44px/1 var(--serif); margin-top: 8px; color: var(--accent); }
     .kpi .value.ink { color: var(--ink); }
     .kpi .small { font: 13px/1.4 var(--hand); color: var(--pencil); margin-top: 6px; }
+    .kpi-clickable { cursor: pointer; transition: background .15s ease, border-color .15s ease; }
+    .kpi-clickable:hover, .kpi-clickable.selected { border-color: var(--ink); background: var(--highlight); }
     .kpi.tilt-1 { transform: rotate(-0.6deg); }
     .kpi.tilt-2 { transform: rotate(0.4deg); }
     .kpi.tilt-3 { transform: rotate(-0.2deg); }
@@ -261,7 +263,14 @@
     .drawer { border: 2px solid var(--ink); border-radius: 10px; background: var(--paper); padding: 16px; box-shadow: 4px 5px 0 -3px rgba(43,38,32,0.2); }
     .drawer.d-pop { animation: dIn 0.28s ease; }
     .drawer[hidden] { display: none; }
-    .d-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0 22px; }
+    .d-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.95fr);
+      grid-template-rows: repeat(3, minmax(0, auto));
+      gap: 0 22px;
+      align-items: start;
+    }
+    .d-grid .field[data-fieldwrap="goal"] { grid-row: 1 / span 3; }
     .d-headside { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
     .d-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
     .d-head h3 { font: 700 22px/1.3 var(--hand-bold); margin: 0; }
@@ -280,6 +289,13 @@
     }
     .field textarea { min-height: 56px; }
     .field input { min-height: 40px; }
+    .d-grid .field[data-fieldwrap="goal"] textarea {
+      width: calc(100% - 12px);
+      min-width: min(100%, 320px);
+      max-width: 100%;
+      min-height: 308px;
+      resize: horizontal;
+    }
     .field textarea:hover, .field input:hover { border-color: var(--ink); }
     .field textarea:focus, .field input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px color-mix(in oklch, var(--highlight), transparent 40%); }
     .field.missing textarea, .field.missing input { border-style: dashed; border-color: var(--accent-text); background: color-mix(in oklch, var(--highlight), transparent 78%); }
@@ -346,6 +362,12 @@
     .ms-item .ms-t { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
     .ms-item .ms-t:hover { color: var(--accent-text); }
     .ms-item .ms-t.expanded { white-space: normal; overflow: visible; word-break: break-all; color: var(--ink); }
+    .ms-detail { margin-top: 8px; padding: 8px 10px; border: 1.5px solid var(--rule); border-radius: 7px; background: color-mix(in oklch, var(--paper-tint), transparent 12%); }
+    .ms-detail[hidden] { display: none; }
+    .ms-detail-title { display: block; font: 700 13px/1.3 var(--hand-bold); color: var(--ink); }
+    .ms-detail-copy { display: block; max-height: 7.2em; overflow: auto; white-space: pre-wrap; word-break: break-word; margin-top: 4px; color: var(--pencil); }
+    .ms-detail-link { display: inline-flex; margin-top: 6px; font: 13px/1.2 var(--hand); color: var(--accent-text); text-decoration: underline; cursor: pointer; }
+    .ms-detail-link:hover { color: var(--ink); }
     .note-form { display: flex; gap: 8px; margin-bottom: 8px; }
     .note-form input { flex: 1; min-width: 0; min-height: 38px; border: 2px solid var(--pencil); border-radius: 8px; padding: 6px 10px; font: 14px/1.3 var(--hand); background: var(--paper); color: var(--ink); }
     .note-form input:focus { outline: none; border-color: var(--ink); }
@@ -453,14 +475,19 @@
      .rep-actions .btn-primary, .rep-actions .btn-ghost { flex: 1 1 auto; text-align: center; }
      .rep-hint { font: 13px/1.5 var(--hand); color: var(--pencil); margin-top: 10px; }
 
-    @media (max-width: 1100px) {
-      .layout { grid-template-columns: 1fr; }
+     @media (max-width: 1100px) {
+       .layout { grid-template-columns: 1fr; }
       .kpis { grid-template-columns: 1fr 1fr; }
       .new-task > input { flex-basis: 100%; }
       .new-task .date-fields { flex: 1 1 auto; }
       .cal-cell { min-height: 68px; }
       .cal-task { font-size: 12px; }
-      .sticky { display: none; }
+       .sticky { display: none; }
+     }
+    @media (max-width: 760px) {
+      .d-grid { grid-template-columns: 1fr; grid-template-rows: none; gap: 0; }
+      .d-grid .field[data-fieldwrap="goal"] { grid-row: auto; }
+      .d-grid .field[data-fieldwrap="goal"] textarea { width: 100%; max-width: 100%; min-height: 220px; resize: vertical; }
     }
   </style>
 </head>
@@ -475,10 +502,10 @@
     </div>
 
     <div class="kpis" data-od-id="kpis">
-       <div class="kpi tilt-1"><div class="label">代办/进行中</div><div class="value ink" id="kpiActive">0</div><div class="small">未完成的任务</div></div>
-      <div class="kpi tilt-2"><div class="label">临期 ≤ 2 天</div><div class="value" id="kpiDue">0</div><div class="small">今天优先处理</div></div>
-      <div class="kpi tilt-3"><div class="label">已逾期</div><div class="value" id="kpiOver">0</div><div class="small">尽快补上或改期</div></div>
-      <div class="kpi tilt-4"><div class="label">要点待补</div><div class="value ink" id="kpiMissing">0</div><div class="small">点开任务补要点</div></div>
+       <div class="kpi tilt-1 kpi-clickable" data-kpi="active" role="button" tabindex="0" aria-pressed="false" aria-label="查看代办和进行中的任务"><div class="label">代办/进行中</div><div class="value ink" id="kpiActive">0</div><div class="small">未完成的任务</div></div>
+      <div class="kpi tilt-2 kpi-clickable" data-kpi="due" role="button" tabindex="0" aria-pressed="false" aria-label="查看临期任务"><div class="label">临期 ≤ 2 天</div><div class="value" id="kpiDue">0</div><div class="small">今天优先处理</div></div>
+      <div class="kpi tilt-3 kpi-clickable" data-kpi="over" role="button" tabindex="0" aria-pressed="false" aria-label="查看已逾期任务"><div class="label">已逾期</div><div class="value" id="kpiOver">0</div><div class="small">尽快补上或改期</div></div>
+      <div class="kpi tilt-4 kpi-clickable" data-kpi="missing" role="button" tabindex="0" aria-pressed="false" aria-label="查看要点待补任务"><div class="label">要点待补</div><div class="value ink" id="kpiMissing">0</div><div class="small">点开任务补要点</div></div>
     </div>
 
     <div class="persist-warn" id="persistWarn" data-od-id="persist-warn" hidden>注意：当前环境无法写入浏览器本地存储，刷新后改动会丢失。把文件导出到本地、用浏览器直接打开，即可正常保存。</div>
@@ -748,7 +775,8 @@
        if (!Array.isArray(state.fixed)) state.fixed = [];
        if (!Array.isArray(state.log)) state.log = [];
        if (!Array.isArray(state.notes)) state.notes = [];
-      if (!state.view) state.view = 'list';
+       if (!state.view) state.view = 'list';
+       if (['active', 'due', 'over', 'missing'].indexOf(state.quickFilter) === -1) state.quickFilter = '';
       if (!state.cal) { var _n = new Date(); state.cal = { y: _n.getFullYear(), m: _n.getMonth() }; }
        var STAGE_MIGRATE = { '需求': '待办', '设计': '进行中', '开发': '进行中', '联调': '进行中', '发布': '待办', '代办/进行中': '进行中' };
       state.tasks.forEach(function (t) {
@@ -873,6 +901,7 @@
         var li = e.target.closest('li[data-stage]');
         if (!li) return;
         state.filter = li.getAttribute('data-stage');
+        state.quickFilter = '';
         save(); renderAll();
       });
       navEl.addEventListener('keydown', function (e) {
@@ -881,6 +910,7 @@
         if (!li) return;
         e.preventDefault();
         state.filter = li.getAttribute('data-stage');
+        state.quickFilter = '';
         save(); renderAll();
       });
 
@@ -900,13 +930,45 @@
         document.getElementById('kpiDue').textContent = due;
         document.getElementById('kpiOver').textContent = over;
         document.getElementById('kpiMissing').textContent = miss;
+        document.querySelectorAll('[data-kpi]').forEach(function (kpi) {
+          var selected = state.quickFilter === kpi.getAttribute('data-kpi');
+          kpi.classList.toggle('selected', selected);
+          kpi.setAttribute('aria-pressed', selected ? 'true' : 'false');
+        });
       }
 
       /* ---------- render: list ---------- */
       var listEl = document.getElementById('taskList');
       var sortBtn = document.getElementById('sortBtn');
+      function quickFilterMatches(t, mode) {
+        if (t.done) return false;
+        if (mode === 'active') return true;
+        if (mode === 'missing') return missingOf(t) > 0;
+        var d = dayDiff(t.ddl);
+        if (mode === 'over') return d !== null && d < 0;
+        if (mode === 'due') return d !== null && d >= 0 && d <= 2;
+        return false;
+      }
+      function toggleQuickFilter(mode) {
+        state.quickFilter = state.quickFilter === mode ? '' : mode;
+        state.filter = 'all';
+        state.q = '';
+        state.selectedId = null;
+        save(); renderAll();
+        scrollToEl(listEl, 96);
+      }
+      document.querySelectorAll('[data-kpi]').forEach(function (kpi) {
+        var mode = kpi.getAttribute('data-kpi');
+        kpi.addEventListener('click', function () { toggleQuickFilter(mode); });
+        kpi.addEventListener('keydown', function (e) {
+          if (e.key !== 'Enter' && e.key !== ' ') return;
+          e.preventDefault();
+          toggleQuickFilter(mode);
+        });
+      });
        function visibleTasks() {
          var arr = state.tasks.filter(function (t) {
+           if (state.quickFilter) return quickFilterMatches(t, state.quickFilter);
            if (state.filter === 'all') return true;
            return t.stage === state.filter;
          });
@@ -948,7 +1010,8 @@
       }
        function renderList() {
          var arr = visibleTasks();
-         var label = state.filter === 'all' ? '全部' : state.filter;
+         var quickLabel = { active: '代办/进行中', due: '临期 ≤ 2 天', over: '已逾期', missing: '要点待补' }[state.quickFilter];
+         var label = quickLabel || (state.filter === 'all' ? '全部' : state.filter);
          var q = (state.q || '').trim();
          document.getElementById('listCount').textContent = q
            ? '搜索「' + q + '」 · ' + arr.length + ' 项'
@@ -961,7 +1024,7 @@
            return;
          }
         listEl.innerHTML = arr.map(function (t) {
-          return '<div class="task' + (t.done ? ' done' : '') + (state.selectedId === t.id ? ' selected' : '') + '" data-id="' + t.id + '" data-od-id="task-' + t.id + '" role="button" tabindex="0">'
+           return '<div class="task' + (t.done ? ' done' : '') + (state.selectedId === t.id ? ' selected' : '') + '" id="task-' + t.id + '" data-id="' + t.id + '" data-od-id="task-' + t.id + '" role="button" tabindex="0">'
             + '<button type="button" class="check" data-check="1" aria-label="切换完成"></button>'
             + '<div class="t-main">'
             + '<div class="t-title">' + esc(t.title) + '</div>'
@@ -1154,7 +1217,7 @@
           html += '<div class="field' + (missing ? ' missing' : '') + '" data-fieldwrap="' + f.key + '">'
             + '<div class="f-label">' + f.label + (missing ? '<span class="req">待补</span>' : '') + '</div>'
             + (f.multiline
-                ? '<textarea data-field="' + f.key + '" rows="2">' + esc(val) + '</textarea>'
+                ? '<textarea data-field="' + f.key + '" rows="' + (f.key === 'goal' ? '12' : '2') + '">' + esc(val) + '</textarea>'
                 : '<input data-field="' + f.key + '" type="text" value="' + esc(val) + '" placeholder="https:// 或本地路径" />')
             + '<div class="hint">→ ' + f.hint + '</div>'
             + '</div>';
@@ -1581,13 +1644,37 @@ if (s === '已完成') { t.done = true; t.stage = '已完成'; t.completedOn = f
       }
        var modalDate = null;
         var noteDrafts = {};
-        function msItem(label, arr) {
-          return '<div class="ms-item"><div class="ms-label">' + label + '</div><div class="ms-num">' + arr.length + '</div>'
-            + (arr.length ? '<div class="ms-titles">' + arr.map(function (x) {
-                return '<div class="ms-t" title="点击展开全称">' + esc(x.title) + '</div>';
-              }).join('') + '</div>' : '')
-            + '</div>';
-        }
+         function msItem(label, arr) {
+           return '<div class="ms-item"><div class="ms-label">' + label + '</div><div class="ms-num">' + arr.length + '</div>'
+             + (arr.length ? '<div class="ms-titles">' + arr.map(function (x) {
+                return '<div class="ms-t" data-task-id="' + esc(x.id || '') + '" role="button" tabindex="0" aria-expanded="false" title="点击查看主题内容">' + esc(x.title) + '</div>';
+              }).join('') + '</div><div class="ms-detail" hidden></div>' : '')
+             + '</div>';
+         }
+         function toggleMsDetail(msT) {
+           var id = msT.getAttribute('data-task-id');
+           var task = state.tasks.find(function (x) { return x.id === id; });
+           var item = msT.closest('.ms-item');
+           var detail = item && item.querySelector('.ms-detail');
+           if (!task || !detail) return;
+           var opening = detail.hidden || detail.getAttribute('data-task-id') !== id;
+           document.querySelectorAll('#mBody .ms-detail').forEach(function (el) { el.hidden = true; });
+           document.querySelectorAll('#mBody .ms-t.expanded').forEach(function (el) {
+             el.classList.remove('expanded');
+             el.setAttribute('aria-expanded', 'false');
+             el.setAttribute('title', '点击查看主题内容');
+           });
+           if (!opening) return;
+           var topic = String(task.goal || '').trim() || '还没有填写目标内容';
+           detail.setAttribute('data-task-id', id);
+           detail.innerHTML = '<span class="ms-detail-title">主题内容</span>'
+             + '<span class="ms-detail-copy">' + esc(topic) + '</span>'
+             + '<a class="ms-detail-link" href="#task-' + esc(id) + '" data-task-link="' + esc(id) + '">跳转详情</a>';
+           detail.hidden = false;
+           msT.classList.add('expanded');
+           msT.setAttribute('aria-expanded', 'true');
+           msT.setAttribute('title', '点击收起');
+         }
         function openDayModal(iso) {
           modalDate = iso;
           var lists = dayTasksFor(iso);
@@ -1692,21 +1779,26 @@ if (s === '已完成') { t.done = true; t.stage = '已完成'; t.completedOn = f
        document.getElementById('mClose').addEventListener('click', closeDayModal);
        modalMask.addEventListener('click', function (e) { if (e.target === modalMask) closeDayModal(); });
        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modalMask.hidden) closeDayModal(); });
-         document.getElementById('mBody').addEventListener('click', function (e) {
+          document.getElementById('mBody').addEventListener('click', function (e) {
            var tog = e.target.closest('#mTodoToggle');
            if (tog) {
              var lst = document.getElementById('mTodoList');
              var expanded = tog.getAttribute('aria-expanded') === 'true';
              tog.setAttribute('aria-expanded', String(!expanded));
              if (lst) lst.hidden = expanded;
-             return;
-           }
-           var msT = e.target.closest('.ms-t');
-           if (msT) {
-             var msExp = msT.classList.toggle('expanded');
-             msT.setAttribute('title', msExp ? '点击收起' : '点击展开全称');
-             return;
-           }
+              return;
+            }
+            var taskLink = e.target.closest('[data-task-link]');
+            if (taskLink) {
+              closeDayModal();
+              selectTaskLocate(taskLink.getAttribute('data-task-link'));
+              return;
+            }
+            var msT = e.target.closest('.ms-t');
+            if (msT) {
+              toggleMsDetail(msT);
+              return;
+            }
 if (e.target.closest('#noteAdd')) { addNoteFromModal(); return; }
            var nedit = e.target.closest('[data-noteedit]');
            if (nedit && nedit.getAttribute('contenteditable') !== 'true') {
@@ -1739,6 +1831,12 @@ if (e.target.closest('#noteAdd')) { addNoteFromModal(); return; }
         });
         document.getElementById('mBody').addEventListener('keydown', function (e) {
           if (e.key !== 'Enter' && e.key !== ' ') return;
+          var msT = e.target.closest ? e.target.closest('.ms-t') : null;
+          if (msT) {
+            e.preventDefault();
+            toggleMsDetail(msT);
+            return;
+          }
           var tog = e.target.closest ? e.target.closest('#mTodoToggle') : null;
           if (!tog) return;
           e.preventDefault();
