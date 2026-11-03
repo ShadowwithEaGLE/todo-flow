@@ -64,6 +64,27 @@
 
     .persist-warn { margin: 0 0 16px; padding: 10px 14px; border: 1.5px dashed var(--accent-text); border-radius: 10px; color: var(--accent-text); font: 15px/1.5 var(--hand); background: color-mix(in oklch, var(--highlight), transparent 70%); }
     .persist-warn[hidden] { display: none; }
+    .storage-strip { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 0 0 14px; padding: 8px 0; border-bottom: 1px dashed var(--rule); color: var(--pencil); font: 14px/1.5 var(--hand); }
+    .storage-strip strong { color: var(--ink); font: 700 16px/1.3 var(--serif); }
+    .storage-strip span { flex: 1 1 220px; }
+    .online-users-badge { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-left: 10px; font-size: 13px; color: var(--ink); background: rgba(142,168,157,.18); padding: 3px 10px; border-radius: 999px; border: 1px solid var(--accent); }
+    .online-users-badge .online-dot { width: 7px; height: 7px; border-radius: 50%; background: #2e7d32; display: inline-block; box-shadow: 0 0 0 2px rgba(46,125,50,.2); }
+    .storage-strip button { min-height: 36px; }
+    .storage-gate { position: fixed; inset: 0; z-index: 1000; display: grid; place-content: center; gap: 12px; padding: 24px; background: rgba(43,38,32,.76); color: var(--paper); text-align: center; font: 18px/1.5 var(--hand); }
+    .storage-gate[hidden] { display: none; }
+    .storage-gate .gate-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
+    .storage-gate button { min-height: 44px; padding: 8px 14px; border: 2px solid var(--paper); border-radius: 8px; background: transparent; color: var(--paper); font: 600 15px/1.2 var(--hand); cursor: pointer; }
+    .storage-gate button:hover { background: rgba(255,255,255,.12); }
+    .storage-dialog { width: min(440px, calc(100vw - 32px)); max-width: 440px; border: 2px solid var(--ink); border-radius: 10px; padding: 0; background: var(--paper); color: var(--ink); box-shadow: 5px 6px 0 rgba(43,38,32,.2); }
+    .storage-dialog::backdrop { background: rgba(43,38,32,.72); }
+    .storage-dialog form, .storage-dialog .dialog-body { display: flex; flex-direction: column; gap: 12px; padding: 20px; }
+    .storage-dialog h3 { margin: 0; font: 700 22px/1.25 var(--serif); }
+    .storage-dialog p { margin: 0; color: var(--pencil); font: 15px/1.5 var(--hand); }
+    .storage-dialog label { display: grid; gap: 5px; font: 15px/1.4 var(--hand); }
+    .storage-dialog input { width: 100%; min-height: 44px; border: 2px solid var(--pencil); border-radius: 7px; padding: 8px 10px; background: #fff; color: var(--ink); font: 16px/1.3 var(--hand); }
+    .storage-dialog .dialog-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+    .storage-dialog .dialog-error { color: var(--accent-text); }
+    .storage-dialog button { min-height: 42px; }
 
     /* ---------- local file sync ---------- */
     .sync-warn { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin: 0 0 16px; padding: 12px 14px; border: 2px solid var(--ink); border-radius: 10px; background: var(--highlight); box-shadow: 4px 5px 0 -3px rgba(43,38,32,0.18); }
@@ -193,7 +214,7 @@
     .btn-ghost[aria-pressed="true"] { background: var(--highlight); color: var(--ink); border-color: var(--ink); }
 
     .list-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
-     .list-head .count { font: 13px/1 var(--mono); color: var(--pencil); letter-spacing: 0.1em; }
+     .list-head .count { flex: 0 1 220px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 13px/1 var(--mono); color: var(--pencil); letter-spacing: 0.1em; }
      .search-input { flex: 0 1 220px; min-width: 140px; min-height: 36px; border: 2px solid var(--pencil); border-radius: 999px; padding: 6px 14px; font: 14px/1 var(--hand); background: var(--paper); color: var(--ink); }
      .search-input:focus { outline: none; border-color: var(--ink); background: var(--highlight); }
      .search-input.on { border-color: var(--accent-text); background: var(--highlight); box-shadow: 3px 3px 0 -1px rgba(43,38,32,0.25); }
@@ -255,6 +276,24 @@
     a.chip-out:hover { background: var(--highlight); border-color: var(--ink); }
     .chip-none { border-style: dashed; }
     .chip-miss { border-style: dashed; border-color: var(--accent-text); color: var(--accent-text); }
+    .chip-rel { font-family: var(--hand); font-size: 13px; color: var(--ink); background: color-mix(in oklch, var(--highlight), transparent 75%); border-color: var(--ink); }
+    .chip-rel-link { display: inline-flex; align-items: center; gap: 4px; border: 1.5px solid var(--pencil); border-radius: 999px; background: var(--paper); padding: 4px 10px; font: 13px/1 var(--hand); color: var(--ink); cursor: pointer; transition: all .12s; }
+    .chip-tag { font-family: var(--hand); font-size: 13px; font-weight: bold; border-width: 1.5px; border-style: solid; cursor: pointer; transition: all .12s; }
+    .chip-tag:hover { filter: brightness(0.95); box-shadow: 0 0 0 2px var(--ink); }
+    .t-tag-btn { display: inline-flex; align-items: center; gap: 4px; font-family: var(--hand-bold); font-weight: 700; cursor: pointer; transition: all .12s; }
+    .t-tag-btn:hover { filter: brightness(0.95); box-shadow: 0 0 0 2px var(--ink); transform: translateY(-0.5px); }
+    .task.task-dim { opacity: 0.38; }
+    .task.task-dim:hover { opacity: 0.85; }
+    .d-tag-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .d-tag-input { min-height: 36px; padding: 4px 10px; border: 1.5px solid var(--pencil); border-radius: 8px; background: var(--paper); font: 15px/1.4 var(--hand); color: var(--ink); flex: 1 1 200px; max-width: 320px; }
+    .d-tag-input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px color-mix(in oklch, var(--highlight), transparent 40%); }
+    .chip-rel-link:hover { border-color: var(--accent-text); background: var(--highlight); color: var(--accent-text); }
+    .chip-rel-link .rel-arrow { font: 11px/1 var(--mono); opacity: 0.6; }
+    .d-rel-pick { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 6px; }
+    .d-rel-pick select { min-height: 38px; border: 1.5px solid var(--pencil); border-radius: 8px; background: var(--paper); font: 15px/1.4 var(--hand); color: var(--ink); padding: 6px 10px; max-width: 100%; }
+    .d-rel-pick select:hover { border-color: var(--ink); }
+    .d-rel-pick select:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px color-mix(in oklch, var(--highlight), transparent 40%); }
+    .d-rel-chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; width: 100%; margin-top: 4px; }
 
     .empty-list { border: 2px dashed var(--pencil); border-radius: 10px; padding: 28px; text-align: center; color: var(--pencil); font: 17px/1.5 var(--hand); background: var(--paper); }
 
@@ -461,7 +500,19 @@
     .fx-panel-item .fx-rule { font: 11px/1 var(--mono); color: var(--pencil); flex-shrink: 0; }
     .fx-panel-empty { font: 13px/1.5 var(--hand); color: var(--pencil); margin-top: 8px; }
 
-     /* ---------- report modal ---------- */
+     /* ---------- audit modal ---------- */
+    .audit-list { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; max-height: 52vh; overflow-y: auto; padding-right: 4px; }
+    .audit-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; border: 1.5px solid var(--pencil); border-radius: 8px; padding: 10px 12px; background: var(--paper); font: 14px/1.4 var(--hand); }
+    .audit-item:hover { border-color: var(--ink); background: color-mix(in oklch, var(--highlight), transparent 60%); }
+    .audit-meta { min-width: 0; flex: 1; }
+    .audit-time { font: 12px/1 var(--mono); color: var(--pencil); margin-bottom: 3px; }
+    .audit-desc { font: 700 14px/1.3 var(--hand-bold); color: var(--ink); word-break: break-all; }
+    .audit-stat { font: 12px/1 var(--mono); color: var(--pencil); margin-top: 3px; }
+    .audit-btn { flex-shrink: 0; min-height: 32px; padding: 4px 12px; font: 700 13px/1 var(--hand-bold); border-radius: 999px; border: 1.5px solid var(--ink); background: var(--paper); color: var(--ink); cursor: pointer; transition: all .12s; }
+    .audit-btn:hover { background: var(--highlight); border-color: var(--accent-text); color: var(--accent-text); }
+    .audit-empty { border: 2px dashed var(--pencil); border-radius: 8px; padding: 24px; text-align: center; color: var(--pencil); font: 15px/1.5 var(--hand); margin-top: 12px; }
+
+    /* ---------- report modal ---------- */
      .rep-bar { display: flex; gap: 6px; margin: 14px 0 12px; }
      .rep-tab { min-height: 38px; padding: 6px 18px; border: 2px solid var(--pencil); border-radius: 999px; background: var(--paper); font: 15px/1 var(--hand); color: var(--pencil); cursor: pointer; }
      .rep-tab.on { border-color: var(--ink); color: var(--ink); background: var(--highlight); font-weight: 700; }
@@ -484,7 +535,8 @@
       .cal-task { font-size: 12px; }
        .sticky { display: none; }
      }
-    @media (max-width: 760px) {
+@media (max-width: 760px) {
+      .storage-strip { align-items: flex-start; }
       .d-grid { grid-template-columns: 1fr; grid-template-rows: none; gap: 0; }
       .d-grid .field[data-fieldwrap="goal"] { grid-row: auto; }
       .d-grid .field[data-fieldwrap="goal"] textarea { width: 100%; max-width: 100%; min-height: 220px; resize: vertical; }
@@ -492,6 +544,13 @@
   </style>
 </head>
 <body>
+  <div class="storage-gate" id="storageGate" hidden role="status" aria-live="polite">
+    <div id="storageGateText">正在连接局域网共享…</div>
+    <div class="gate-actions">
+      <button type="button" id="storageRetry">重试连接</button>
+      <button type="button" id="storageLocal">返回本机模式</button>
+    </div>
+  </div>
   <div class="page">
     <div class="head" data-od-id="head">
       <h1><em>流程待办 · Flow Board</em>
@@ -509,6 +568,11 @@
     </div>
 
     <div class="persist-warn" id="persistWarn" data-od-id="persist-warn" hidden>注意：当前环境无法写入浏览器本地存储，刷新后改动会丢失。把文件导出到本地、用浏览器直接打开，即可正常保存。</div>
+    <div class="storage-strip" id="storageStrip" aria-live="polite">
+      <strong id="storageModeLabel">本机模式</strong>
+      <span id="storageStatus">数据保存在当前浏览器。</span><span id="storageOnlineBadge" class="online-users-badge" style="display:none;"><span class="online-dot"></span><span id="storageOnlineText"></span></span>
+      <button type="button" class="btn-ghost" id="storageModeBtn">连接局域网共享</button>
+    </div>
 
     <div class="update-warn" id="updateWarn" data-od-id="update-warn" hidden>
       <div class="uw-text"><strong>发现新版本 <span id="uwVersion">—</span></strong><span id="uwNote" class="uw-note"></span></div>
@@ -554,9 +618,11 @@
             <div class="head-actions">
               <button type="button" class="btn-ghost" id="sortBtn" data-od-id="sort-ddl" aria-pressed="false">按 DDL 排序</button>
               <button type="button" class="btn-ghost" id="fixedBtn" data-od-id="fixed-btn" title="管理每周 / 每月固定重复的日程">固定日程</button>
+              <button type="button" class="btn-ghost" id="storageModeBtnTop">本机模式</button>
               <button type="button" class="btn-ghost" id="syncBtn" data-od-id="sync-btn" title="把数据自动同步到一个本机文件，清除浏览器缓存后也能找回">本机同步</button>
               <button type="button" class="btn-ghost" id="exportBtn" data-od-id="export" title="把全部任务备份成本地 JSON 文件">导出</button>
               <button type="button" class="btn-ghost" id="importBtn" data-od-id="import" title="从备份 JSON 文件恢复">导入</button>
+              <button type="button" class="btn-ghost" id="auditBtn" data-od-id="audit-btn" title="查看最近24小时内修改的审计版本并支持一键回滚">审计追踪</button>
               <input type="file" id="importFile" accept="application/json,.json" hidden />
             </div>
           </div>
@@ -595,6 +661,18 @@
           <button type="button" class="modal-close" id="mClose" aria-label="关闭">✕</button>
         </div>
         <div id="mBody"></div>
+      </div>
+    </div>
+    <div class="modal-mask" id="auditModal" hidden>
+      <div class="modal" role="dialog" aria-modal="true" data-od-id="audit-modal">
+        <div class="modal-head">
+          <div>
+            <h4>审计追踪与版本回滚</h4>
+            <div class="m-sub">系统自动记录最近 24 小时内的每次修改快照，可随时比对并一键回滚到目标版本</div>
+          </div>
+          <button type="button" class="modal-close" id="auditClose" aria-label="关闭">✕</button>
+        </div>
+        <div class="audit-list" id="auditList"></div>
       </div>
     </div>
     <div class="modal-mask" id="importModal" hidden>
@@ -714,12 +792,44 @@
     </div>
   </div>
 
+  <dialog class="storage-dialog" id="accessDialog" aria-labelledby="accessTitle">
+    <form id="accessForm">
+      <h3 id="accessTitle">加入局域网共享</h3>
+      <p>输入显示名称即可加入。任何能访问此地址的人都可以查看和修改共享数据；名称仅用于活动记录，不验证身份。</p>
+      <label>显示名称
+        <input id="memberName" type="text" maxlength="40" autocomplete="name" required />
+      </label>
+      <p class="dialog-error" id="accessError" role="status"></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn-ghost" id="accessLocal">取消，使用本机数据</button>
+        <button type="submit" class="btn-primary" id="accessSubmit">加入共享</button>
+      </div>
+    </form>
+  </dialog>
+  <dialog class="storage-dialog" id="conflictDialog" aria-labelledby="conflictTitle">
+    <div class="dialog-body">
+      <h3 id="conflictTitle">共享数据已被更新</h3>
+      <p>你的未同步修改已保存在此浏览器。先导出草稿，再载入共享版本；载入前不会覆盖草稿备份。</p>
+      <div class="dialog-actions">
+        <button type="button" class="btn-ghost" id="conflictLocal">切回本机模式</button>
+        <button type="button" class="btn-ghost" id="conflictExport">导出未同步草稿</button>
+        <button type="button" class="btn-primary" id="conflictLoad">放弃当前草稿并载入共享版</button>
+      </div>
+    </div>
+  </dialog>
+
   <script>
     (function () {
        var STAGES = ['待办', '进行中', '已完成'];
       var KEY = 'flow-todo-v1';
-      var APP_VERSION = '0.7.4';
+      var AUDIT_KEY = KEY + '_audit_trail';
+      var APP_VERSION = '0.8.0';
       var VERSION_URL = 'https://shadowwitheagle.github.io/todo-flow/version.json';
+      var FLOW_BOARD_SERVER = false;
+      var MODE_KEY = KEY + '_storage_mode';
+      var PREFS_KEY = KEY + '_shared_prefs';
+      var MEMBER_KEY = KEY + '_shared_name';
+      var RECOVERY_KEY = KEY + '_shared_recovery';
       var FIELDS = [
         { key: 'goal', label: '目标', hint: '这个任务要达成什么结果？一句话即可', required: true, multiline: true },
         { key: 'acceptance', label: '验收标准', hint: '怎样算完成？写 1–2 条可验证的条件', required: true, multiline: true },
@@ -742,10 +852,10 @@
 
       function seed() {
         return [
-          { id: uid(), title: '整理需求评审纪要', stage: '待办', ddl: dISO(0), goal: '把评审结论同步给全组，锁定 v1.3 范围', acceptance: '', output: '', note: '评审录音在飞书妙记', done: false, created: Date.now() - 86400000 * 2 },
-           { id: uid(), title: '支付回调接口联调', stage: '进行中', ddl: dISO(-1), goal: '', acceptance: '成功 / 失败 / 重试三类回调都有测试记录', output: 'https://github.com/acme/pay-service/pull/128', note: '', done: false, created: Date.now() - 86400000 * 5 },
-          { id: uid(), title: '账单导出需求确认', stage: '待办', ddl: dISO(2), goal: '', acceptance: '', output: '', note: '等财务同学确认字段口径', done: false, created: Date.now() - 86400000 * 1 },
-           { id: uid(), title: '登录态刷新接口开发', stage: '进行中', ddl: dISO(1), goal: '无感续期，避免掉线投诉', acceptance: '', output: '', note: '', done: false, created: Date.now() - 86400000 * 3 },
+          { id: uid(), title: '整理需求评审纪要', stage: '待办', tag: '需求规划', ddl: dISO(0), goal: '把评审结论同步给全组，锁定 v1.3 范围', acceptance: '', output: '', note: '评审录音在飞书妙记', done: false, created: Date.now() - 86400000 * 2 },
+           { id: uid(), title: '支付回调接口联调', stage: '进行中', tag: '交易服务', ddl: dISO(-1), goal: '', acceptance: '成功 / 失败 / 重试三类回调都有测试记录', output: 'https://github.com/acme/pay-service/pull/128', note: '', done: false, created: Date.now() - 86400000 * 5 },
+          { id: uid(), title: '账单导出需求确认', stage: '待办', tag: '需求规划', ddl: dISO(2), goal: '', acceptance: '', output: '', note: '等财务同学确认字段口径', done: false, created: Date.now() - 86400000 * 1 },
+           { id: uid(), title: '登录态刷新接口开发', stage: '进行中', tag: '交易服务', ddl: dISO(1), goal: '无感续期，避免掉线投诉', acceptance: '', output: '', note: '', done: false, created: Date.now() - 86400000 * 3 },
           { id: uid(), title: '设置页视觉走查', stage: '待办', ddl: dISO(5), goal: '核对深色模式与字号档位', acceptance: '走查表 24 项全部通过', output: 'https://www.figma.com/file/setting-audit', note: '', done: false, created: Date.now() - 86400000 * 4 },
           { id: uid(), title: 'v1.2 发布清单核对', stage: '待办', ddl: '', goal: '', acceptance: '', output: '', note: '', done: false, created: Date.now() - 86400000 * 1 },
           { id: uid(), title: '旧版数据迁移脚本', stage: '已完成', ddl: dISO(-6), goal: '迁移 3 张历史表', acceptance: '抽样 100 条无差异', output: 'https://github.com/acme/dbtool/pull/96', note: '', done: true, created: Date.now() - 86400000 * 12 },
@@ -763,6 +873,40 @@
       var storageOK = (function () {
         try { localStorage.setItem('__ft_test', '1'); localStorage.removeItem('__ft_test'); return true; } catch (e) { return false; }
       })();
+      var dataMode = 'local';
+      if (FLOW_BOARD_SERVER) {
+        try { dataMode = localStorage.getItem(MODE_KEY) === 'local' ? 'local' : 'shared'; } catch (e) { dataMode = 'shared'; }
+      }
+      var sharedReady = dataMode === 'local';
+      var sharedInitialized = false;
+      var sharedRevision = 0;
+      var sharedMember = '';
+      var sharedBaseline = '';
+      var sharedTimer = null;
+      var sharedSaving = false;
+      var sharedBlocked = false;
+      var sharedEvents = null;
+      var onlineUsersList = [];
+      function renderOnlineUsers(list) {
+        if (Array.isArray(list)) onlineUsersList = list;
+        var badge = document.getElementById('storageOnlineBadge');
+        var textEl = document.getElementById('storageOnlineText');
+        if (!badge || !textEl) return;
+        if (dataMode !== 'shared' || !onlineUsersList || onlineUsersList.length === 0) {
+          badge.style.display = 'none';
+          return;
+        }
+        var count = onlineUsersList.length;
+        var desc = onlineUsersList.map(function(u) { return (u.name || '协作者') + ' (' + (u.ip || '未知IP') + ')'; }).join('、');
+        textEl.textContent = '在线 ' + count + ' 人：' + desc;
+        badge.style.display = 'inline-flex';
+      }
+      var pendingRemoteRevision = 0;
+      var sharedModePending = false;
+      var authCheckInFlight = false;
+      var connectAttempt = 0;
+      var conflictRemote = null;
+      var conflictDraft = null;
       var state = null;
       var localWasEmpty = false;
       if (storageOK) {
@@ -784,13 +928,395 @@
         if (t.done) t.stage = '已完成';
         if (t.stage === '已完成') t.done = true;
       });
-       if (state.filter === 'done') state.filter = '已完成';
+      if (state.filter === 'done') state.filter = '已完成';
        if (state.filter === '代办/进行中') state.filter = '进行中';
       if (state.filter !== 'all' && STAGES.indexOf(state.filter) === -1) state.filter = 'all';
+      if (dataMode === 'shared' && storageOK) {
+        try {
+          var savedPrefs = JSON.parse(localStorage.getItem(PREFS_KEY));
+          if (savedPrefs) {
+            if (savedPrefs.filter) state.filter = savedPrefs.filter;
+            if (typeof savedPrefs.sort === 'boolean') state.sort = savedPrefs.sort;
+            if (savedPrefs.selectedId) state.selectedId = savedPrefs.selectedId;
+            if (savedPrefs.view) state.view = savedPrefs.view;
+            if (savedPrefs.quickFilter) state.quickFilter = savedPrefs.quickFilter;
+            if (savedPrefs.cal) state.cal = savedPrefs.cal;
+            if (typeof savedPrefs.q === 'string') state.q = savedPrefs.q;
+          }
+        } catch (e) {}
+      }
+      var localStateSnapshot = JSON.parse(JSON.stringify(state));
+      function cloneJSON(value) { return JSON.parse(JSON.stringify(value)); }
+      function sharedPayload() {
+        return { tasks: state.tasks, fixed: state.fixed, notes: state.notes, log: state.log };
+      }
+      function normalizeSharedPayload(data) {
+        if (!data || typeof data !== 'object') throw new Error('共享数据格式无效');
+        return {
+          tasks: Array.isArray(data.tasks) ? data.tasks.filter(function (x) { return x && x.id; }) : [],
+          fixed: Array.isArray(data.fixed) ? data.fixed.filter(function (x) { return x && x.id; }) : [],
+          notes: Array.isArray(data.notes) ? data.notes.filter(function (x) { return x && x.id && x.date; }) : [],
+          log: Array.isArray(data.log) ? data.log.filter(function (x) { return x && typeof x === 'object'; }) : []
+        };
+      }
+      function apiRequest(path, options) {
+        options = options || {};
+        options.credentials = 'same-origin';
+        options.headers = Object.assign({ 'Content-Type': 'application/json' }, options.headers || {});
+        return fetch(path, options).then(function (response) {
+          return response.json().catch(function () { return {}; }).then(function (data) {
+            if (!response.ok) {
+              var err = new Error(data.error || '请求失败');
+              err.status = response.status;
+              err.data = data;
+              throw err;
+            }
+            return data;
+          });
+        });
+      }
+      function writeSharedPrefs() {
+        if (!storageOK) return;
+        try {
+          localStorage.setItem(PREFS_KEY, JSON.stringify({
+            filter: state.filter, sort: state.sort, selectedId: state.selectedId,
+            view: state.view, quickFilter: state.quickFilter, cal: state.cal, q: state.q
+          }));
+        } catch (e) {}
+      }
+      function writeRecovery(payload) {
+        if (!storageOK) return;
+        try {
+          localStorage.setItem(RECOVERY_KEY, JSON.stringify({
+            app: 'flow-todo', ver: APP_VERSION, state: normalizeSharedPayload(payload), savedAt: Date.now()
+          }));
+        } catch (e) {}
+      }
+      function readRecovery() {
+        if (!storageOK) return null;
+        try {
+          var data = JSON.parse(localStorage.getItem(RECOVERY_KEY));
+          return data && data.app === 'flow-todo' ? normalizeSharedPayload(data.state) : null;
+        } catch (e) { return null; }
+      }
+      function setStorageStatus(message) {
+        var el = document.getElementById('storageStatus');
+        if (el && message) el.textContent = message;
+      }
+      function updateStorageUI(message) {
+        var shared = dataMode === 'shared';
+        document.getElementById('storageModeLabel').textContent = shared ? '局域网共享模式' : '本机模式';
+        document.getElementById('storageModeBtn').textContent = shared ? '切回本机' : '连接局域网共享';
+        document.getElementById('storageModeBtnTop').textContent = shared ? '局域网共享' : '本机模式';
+        document.getElementById('storageModeBtn').disabled = !FLOW_BOARD_SERVER;
+        document.getElementById('storageModeBtnTop').disabled = !FLOW_BOARD_SERVER;
+        renderOnlineUsers();
+        if (message) setStorageStatus(message);
+        else if (sharedBlocked) setStorageStatus('存在未同步草稿；请先处理冲突。');
+        else if (shared && !sharedReady) setStorageStatus('正在连接共享数据…');
+        else if (shared) setStorageStatus((sharedMember ? '协作者：' + sharedMember + ' · ' : '') + (sharedInitialized ? '共享数据已同步。' : '共享库为空，请导入本机 JSON 备份。'));
+        else setStorageStatus(FLOW_BOARD_SERVER ? '数据保存在此浏览器；与共享库相互独立。' : '数据保存在当前浏览器；共享模式请打开部署电脑的局域网地址。');
+        var importBtn = document.getElementById('importBtn');
+        importBtn.disabled = shared && sharedInitialized;
+        importBtn.title = shared && sharedInitialized ? '共享库已初始化；为避免覆盖，首次迁移入口已关闭' : '从备份 JSON 文件恢复';
+      }
+      function applySharedPayload(payload) {
+        var incoming = normalizeSharedPayload(payload);
+        state.tasks = incoming.tasks;
+        state.fixed = incoming.fixed;
+        state.notes = incoming.notes;
+        state.log = incoming.log;
+        state.tasks.forEach(function (t) {
+          if (STAGE_MIGRATE[t.stage]) t.stage = STAGE_MIGRATE[t.stage];
+          if (t.done) t.stage = '已完成';
+          if (t.stage === '已完成') t.done = true;
+        });
+        if (!state.tasks.some(function (t) { return t.id === state.selectedId; })) state.selectedId = null;
+      }
+      function persistMode(mode) {
+        if (!storageOK) return;
+        try { localStorage.setItem(MODE_KEY, mode); } catch (e) {}
+      }
       function save() {
         state.savedAt = Date.now();
-        try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
-        /* 本机同步不在此触发：只在打开 / 关闭网页时读写同步文件 */
+        if (dataMode === 'local') {
+          try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+          localStateSnapshot = cloneJSON(state);
+          recordAuditSnapshot();
+          return;
+        }
+        writeSharedPrefs();
+        if (!sharedReady || sharedBlocked) return;
+        queueSharedSave();
+        recordAuditSnapshot();
+      }
+      function showGate(message) {
+        document.getElementById('storageGateText').textContent = message;
+        document.getElementById('storageGate').hidden = false;
+        document.querySelector('.page').inert = true;
+      }
+      function hideGate() {
+        document.getElementById('storageGate').hidden = true;
+        document.querySelector('.page').inert = false;
+      }
+      function setAccessDialogError(message) {
+        document.getElementById('accessError').textContent = message || '';
+      }
+      function askForAccess() {
+        document.getElementById('storageGate').hidden = true;
+        document.getElementById('memberName').value = sharedMember || (storageOK && localStorage.getItem(MEMBER_KEY)) || '';
+        setAccessDialogError('');
+        var dialog = document.getElementById('accessDialog');
+        if (!dialog.open) dialog.showModal();
+        document.getElementById('memberName').focus();
+      }
+      function readServerState() {
+        return apiRequest('/api/state', { method: 'GET' });
+      }
+      function startEventStream() {
+        if (sharedEvents) sharedEvents.close();
+        sharedEvents = new EventSource('/api/events?since=' + encodeURIComponent(sharedRevision));
+        sharedEvents.onopen = function () {
+          updateStorageUI(sharedBlocked ? '存在未同步草稿；请先处理冲突。' : '共享连接正常。');
+          if (!sharedBlocked && JSON.stringify(sharedPayload()) !== sharedBaseline) queueSharedSave();
+        };
+        sharedEvents.onmessage = function (event) {
+          var info;
+          try { info = JSON.parse(event.data); } catch (e) { return; }
+          if (info.onlineUsers) renderOnlineUsers(info.onlineUsers);
+          if (!info.revision || info.revision <= sharedRevision || sharedBlocked) return;
+          pendingRemoteRevision = Math.max(pendingRemoteRevision, info.revision);
+          if (!sharedSaving && !sharedTimer) loadRemoteChanges();
+        };
+        sharedEvents.onerror = function () {
+          updateStorageUI(sharedBlocked ? '存在未同步草稿；请先处理冲突。' : '共享连接中断；本机保留未同步草稿并等待重连。');
+          if (authCheckInFlight) return;
+          authCheckInFlight = true;
+          apiRequest('/api/session', { method: 'GET' }).catch(function (err) {
+            if (err.status === 401 && dataMode === 'shared') {
+              if (sharedEvents) sharedEvents.close();
+              sharedBlocked = true;
+              writeRecovery(sharedPayload());
+              showGate('共享会话已过期，请重新输入显示名称。');
+              askForAccess();
+            }
+          }).then(function () { authCheckInFlight = false; });
+        };
+      }
+      function finishSharedConnection(remote, member, attempt) {
+        if (attempt !== connectAttempt) return;
+        dataMode = 'shared';
+        sharedModePending = false;
+        sharedReady = true;
+        sharedBlocked = false;
+        sharedMember = member || '';
+        sharedRevision = remote.revision;
+        sharedInitialized = !!remote.initialized;
+        if (storageOK && sharedMember) { try { localStorage.setItem(MEMBER_KEY, sharedMember); } catch (e) {} }
+        persistMode('shared');
+        var recovery = readRecovery();
+        var serverPayload = normalizeSharedPayload(remote.state);
+        sharedBaseline = JSON.stringify(serverPayload);
+        if (recovery && JSON.stringify(recovery) !== sharedBaseline) {
+          applySharedPayload(recovery);
+          showConflict(remote, recovery);
+        } else {
+          if (recovery && storageOK) { try { localStorage.removeItem(RECOVERY_KEY); } catch (e) {} }
+          applySharedPayload(serverPayload);
+          hideGate();
+          renderAll();
+        }
+        startEventStream();
+        updateStorageUI();
+      }
+      function startSharedMode() {
+        if (!FLOW_BOARD_SERVER) {
+          updateStorageUI('请先通过部署电脑的局域网地址打开共享版，再连接共享数据。');
+          return;
+        }
+        var attempt = ++connectAttempt;
+        sharedModePending = true;
+        showGate('正在连接局域网共享…');
+        apiRequest('/api/session', { method: 'GET' }).then(function (session) {
+          return readServerState().then(function (remote) { finishSharedConnection(remote, session.name, attempt); });
+        }).catch(function (err) {
+          if (attempt !== connectAttempt) return;
+          if (err.status === 401) askForAccess();
+          else {
+            sharedModePending = false;
+            document.getElementById('storageGateText').textContent = '无法连接共享服务。请确认部署电脑和 8080 服务正在运行。';
+            document.getElementById('storageGate').hidden = false;
+          }
+        });
+      }
+      function setLocalMode() {
+        ++connectAttempt;
+        sharedModePending = false;
+        if (sharedEvents) { sharedEvents.close(); sharedEvents = null; }
+        if (sharedTimer) { clearTimeout(sharedTimer); sharedTimer = null; }
+        sharedReady = false;
+        sharedBlocked = false;
+        dataMode = 'local';
+        persistMode('local');
+        if (localStateSnapshot) state = cloneJSON(localStateSnapshot);
+        var access = document.getElementById('accessDialog');
+        var conflict = document.getElementById('conflictDialog');
+        if (access.open) access.close();
+        if (conflict.open) conflict.close();
+        hideGate();
+        renderAll();
+        updateStorageUI();
+      }
+      function showConflict(remote, draft) {
+        sharedBlocked = true;
+        sharedReady = true;
+        if (sharedTimer) { clearTimeout(sharedTimer); sharedTimer = null; }
+        conflictRemote = remote;
+        conflictDraft = normalizeSharedPayload(draft || sharedPayload());
+        writeRecovery(conflictDraft);
+        applySharedPayload(conflictDraft);
+        document.getElementById('storageGate').hidden = true;
+        document.querySelector('.page').inert = true;
+        var dialog = document.getElementById('conflictDialog');
+        if (!dialog.open) dialog.showModal();
+        updateStorageUI();
+      }
+      function loadConflictRemote() {
+        if (!conflictRemote) return;
+        applySharedPayload(conflictRemote.state);
+        sharedRevision = conflictRemote.revision;
+        sharedInitialized = !!conflictRemote.initialized;
+        sharedBaseline = JSON.stringify(normalizeSharedPayload(conflictRemote.state));
+        sharedBlocked = false;
+        sharedReady = true;
+        if (storageOK) { try { localStorage.removeItem(RECOVERY_KEY); } catch (e) {} }
+        conflictRemote = null;
+        conflictDraft = null;
+        document.getElementById('conflictDialog').close();
+        document.querySelector('.page').inert = false;
+        renderAll();
+        updateStorageUI('已载入最新共享数据。');
+      }
+      function loadRemoteChanges() {
+        if (dataMode !== 'shared' || sharedBlocked) return;
+        readServerState().then(function (remote) {
+          if (remote.revision <= sharedRevision) return;
+          if (sharedSaving || sharedTimer || JSON.stringify(sharedPayload()) !== sharedBaseline) {
+            showConflict(remote, sharedPayload());
+            return;
+          }
+          applySharedPayload(remote.state);
+          sharedRevision = remote.revision;
+          sharedInitialized = !!remote.initialized;
+          sharedBaseline = JSON.stringify(normalizeSharedPayload(remote.state));
+          pendingRemoteRevision = 0;
+          renderAll();
+          updateStorageUI('其他浏览器有更新，已自动同步。');
+        }).catch(function (err) {
+          if (err.status === 401) {
+            sharedBlocked = true;
+            writeRecovery(sharedPayload());
+            askForAccess();
+          } else updateStorageUI('暂时无法读取共享更新；未同步草稿仍保存在此浏览器。');
+        });
+      }
+      function queueSharedSave() {
+        if (!sharedReady || sharedBlocked) return;
+        if (JSON.stringify(sharedPayload()) === sharedBaseline) return;
+        writeRecovery(sharedPayload());
+        updateStorageUI('有修改，正在等待同步…');
+        if (sharedTimer) clearTimeout(sharedTimer);
+        sharedTimer = setTimeout(flushSharedSave, 180);
+      }
+      function flushSharedSave() {
+        sharedTimer = null;
+        if (!sharedReady || sharedBlocked || sharedSaving) return;
+        var payload = cloneJSON(sharedPayload());
+        var serialized = JSON.stringify(payload);
+        if (serialized === sharedBaseline) return;
+        sharedSaving = true;
+        updateStorageUI('正在保存共享修改…');
+        apiRequest('/api/state', {
+          method: 'PUT',
+          body: JSON.stringify({ expectedRevision: sharedRevision, state: payload })
+        }).then(function (result) {
+          sharedRevision = result.revision;
+          sharedInitialized = !!result.initialized;
+          sharedBaseline = serialized;
+          sharedSaving = false;
+          if (storageOK) { try { localStorage.removeItem(RECOVERY_KEY); } catch (e) {} }
+          updateStorageUI('已同步到共享库。');
+          if (JSON.stringify(sharedPayload()) !== sharedBaseline) queueSharedSave();
+          else if (pendingRemoteRevision > sharedRevision) loadRemoteChanges();
+        }).catch(function (err) {
+          sharedSaving = false;
+          if (err.status === 409) showConflict(err.data, payload);
+          else if (err.status === 401) {
+            sharedBlocked = true;
+            writeRecovery(payload);
+            askForAccess();
+          } else updateStorageUI('保存失败；草稿已保存在此浏览器，重连后可恢复。');
+        });
+      }
+      function bootStorage() {
+        document.getElementById('storageModeBtn').addEventListener('click', function () {
+          if (dataMode === 'shared') { setLocalMode(); return; }
+          if (!FLOW_BOARD_SERVER) {
+            updateStorageUI('共享模式请通过部署电脑的局域网地址打开；先在此页导出 JSON。');
+            return;
+          }
+          localStateSnapshot = cloneJSON(state);
+          startSharedMode();
+        });
+        document.getElementById('storageModeBtnTop').addEventListener('click', function () {
+          document.getElementById('storageModeBtn').click();
+        });
+        document.getElementById('storageRetry').addEventListener('click', startSharedMode);
+        document.getElementById('storageLocal').addEventListener('click', setLocalMode);
+        document.getElementById('accessLocal').addEventListener('click', setLocalMode);
+        document.getElementById('accessDialog').addEventListener('cancel', function (e) { e.preventDefault(); });
+        document.getElementById('accessForm').addEventListener('submit', function (e) {
+          e.preventDefault();
+          var name = document.getElementById('memberName').value.trim();
+          var submit = document.getElementById('accessSubmit');
+          submit.disabled = true;
+          setAccessDialogError('正在加入…');
+          var attempt = connectAttempt;
+          apiRequest('/api/login', { method: 'POST', body: JSON.stringify({ name: name }) })
+            .then(function (session) { return readServerState().then(function (remote) { finishSharedConnection(remote, session.name, attempt); }); })
+            .then(function () {
+              if (document.getElementById('accessDialog').open) document.getElementById('accessDialog').close();
+            })
+            .catch(function (err) { setAccessDialogError(err.message || '加入失败，请检查服务连接。'); })
+            .then(function () { submit.disabled = false; });
+        });
+        document.getElementById('conflictExport').addEventListener('click', function () {
+          if (!conflictDraft) return;
+          downloadBlob('todo-flow-unsynced-' + fmtISO(new Date()) + '.json', JSON.stringify({
+            app: 'flow-todo', ver: APP_VERSION, exported: fmtISO(new Date()),
+            tasks: conflictDraft.tasks, fixed: conflictDraft.fixed, notes: conflictDraft.notes, log: conflictDraft.log
+          }, null, 2));
+        });
+        document.getElementById('conflictLoad').addEventListener('click', loadConflictRemote);
+        document.getElementById('conflictLocal').addEventListener('click', setLocalMode);
+        document.getElementById('conflictDialog').addEventListener('cancel', function (e) { e.preventDefault(); });
+        document.getElementById('conflictDialog').addEventListener('click', function (e) { if (e.target === this) e.preventDefault(); });
+        updateStorageUI();
+        if (dataMode === 'shared') startSharedMode();
+        else renderAll();
+      }
+      function save() {
+        state.savedAt = Date.now();
+        if (dataMode === 'local') {
+          try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+          localStateSnapshot = cloneJSON(state);
+          recordAuditSnapshot();
+          return;
+        }
+        writeSharedPrefs();
+        if (!sharedReady || sharedBlocked) return;
+        queueSharedSave();
+        recordAuditSnapshot();
       }
       save();
 
@@ -879,8 +1405,45 @@
 
       /* ---------- render: nav ---------- */
       var navEl = document.getElementById('stageNav');
+      var GROUP_THEMES = [
+        { name: "amber", bg: "#fef3c7", border: "#d97706", text: "#92400e", mark: "#f59e0b" },
+        { name: "blue", bg: "#e0f2fe", border: "#0284c7", text: "#075985", mark: "#0ea5e9" },
+        { name: "emerald", bg: "#d1fae5", border: "#059669", text: "#065f46", mark: "#10b981" },
+        { name: "rose", bg: "#ffe4e6", border: "#e11d48", text: "#9f1239", mark: "#f43f5e" },
+        { name: "purple", bg: "#f3e8ff", border: "#9333ea", text: "#6b21a8", mark: "#a855f7" },
+        { name: "orange", bg: "#ffedd5", border: "#ea580c", text: "#9a3412", mark: "#f97316" },
+        { name: "teal", bg: "#ccfbf1", border: "#0d9488", text: "#115e59", mark: "#14b8a6" }
+      ];
+      function groupThemeOf(tag) {
+        if (!tag) return null;
+        var h = 0;
+        for (var i = 0; i < tag.length; i++) h = (h * 31 + tag.charCodeAt(i)) & 0xffffffff;
+        return GROUP_THEMES[Math.abs(h) % GROUP_THEMES.length];
+      };
+      function taskGroupOf(t) {
+        var g = String(t.tag || t.group || "").trim();
+        if (g) return g;
+        for (var i = 0; i < (t.relatedIds || []).length; i++) {
+          var rt = state.tasks.find(function (x) { return x.id === t.relatedIds[i]; });
+          if (rt && (rt.tag || rt.group)) return String(rt.tag || rt.group).trim();
+        }
+        return "";
+      };
+      function tagButtonHTML(t) {
+        var g = taskGroupOf(t);
+        if (g) {
+          var th = groupThemeOf(g);
+          var style = 'background:' + th.bg + ';border-color:' + th.border + ';color:' + th.text + ';';
+          return '<button type="button" class="chip chip-tag t-tag-btn" style="' + style + '" data-stop="1" data-search-tag="' + esc(g) + '" title="所属分组：' + esc(g) + '（点击筛选此组事项）" aria-label="所属分组 ' + esc(g) + '">🏷️ ' + esc(g) + '</button>';
+        }
+        return '';
+      }
       function taskMatches(t, q) {
-        return [t.title, t.goal, t.acceptance, t.output, t.note].join('\n').toLowerCase().indexOf(q) !== -1;
+        var relTitles = (t.relatedIds || []).map(function (rid) {
+          var rt = state.tasks.find(function (x) { return x.id === rid; });
+          return rt ? rt.title : '';
+        }).join(' ');
+        return [t.title, t.goal, t.acceptance, t.output, t.note, t.tag, taskGroupOf(t), relTitles].join('\n').toLowerCase().indexOf(q) !== -1;
       }
       function renderNav() {
         var items = [{ key: 'all', label: '全部' }]
@@ -995,11 +1558,16 @@
               ? '<a class="chip chip-out" href="' + esc(out) + '" target="_blank" rel="noopener" data-stop="1">↗ ' + esc(shortOut(out)) + '</a>'
               : '<span class="chip chip-out" title="' + esc(out) + '">↗ ' + esc(shortOut(out)) + '</span>')
           : '<span class="chip chip-none">未关联产出</span>';
-        return (t.done
+        return tagButtonHTML(t)
+          + (t.done
             ? '<span class="chip stage-tag">' + esc(t.stage) + '</span>'
              : '<button type="button" class="chip stage-tag cycle" data-cycle="1" data-stop="1" title="点击在 待办 / 进行中 之间切换" aria-label="切换阶段，当前 ' + t.stage + '">' + esc(t.stage) + '<span class="arw">⇄</span></button>')
           + ddlChip(t)
           + outChip
+          + (function () {
+              var relCount = (t.relatedIds || []).filter(function (rid) { return state.tasks.some(function (x) { return x.id === rid; }); }).length;
+              return relCount > 0 ? '<span class="chip chip-rel" title="已关联 ' + relCount + ' 个事项">🔗 关联 ' + relCount + '</span>' : '';
+            })()
           + (!t.done && miss > 0 ? '<span class="chip chip-miss">待补 ' + miss + ' 项</span>' : '');
       }
       function updateListRow(t) {
@@ -1032,6 +1600,20 @@
         }).join('');
       }
       listEl.addEventListener('click', function (e) {
+        var tagBtn = e.target.closest('[data-search-tag]');
+        if (tagBtn) {
+          e.stopPropagation();
+          var tagVal = tagBtn.getAttribute('data-search-tag');
+          var sInput = document.getElementById('searchInput');
+          if (sInput) {
+            sInput.value = tagVal;
+            state.q = tagVal;
+            sInput.classList.toggle('on', !!tagVal.trim());
+            renderNav();
+            renderList();
+          }
+          return;
+        }
         var stop = e.target.closest('[data-stop]');
         if (stop) { e.stopPropagation(); }
         var row = e.target.closest('.task');
@@ -1099,9 +1681,47 @@
        var pendingImport = null;
         var pendingFixed = null;
         var pendingNotes = null;
-        function closeImportModal() { importModal.hidden = true; pendingImport = null; pendingFixed = null; pendingNotes = null; }
-       function applyImportedTasks(mode) {
+        var pendingLog = null;
+        function closeImportModal() {
+          importModal.hidden = true;
+          pendingImport = null; pendingFixed = null; pendingNotes = null; pendingLog = null;
+          document.getElementById('imMerge').disabled = false;
+          document.getElementById('imOverwrite').hidden = dataMode === 'shared';
+        }
+      function applyImportedTasks(mode) {
          if (!pendingImport) return;
+         if (dataMode === 'shared') {
+           if (sharedInitialized) {
+             closeImportModal();
+             updateStorageUI('共享库已有数据；首次迁移入口已关闭，避免覆盖。');
+             return;
+           }
+           var sharedImport = {
+             tasks: pendingImport,
+             fixed: pendingFixed || [],
+             notes: pendingNotes || [],
+             log: pendingLog || []
+           };
+           var sharedImportButton = document.getElementById('imMerge');
+           sharedImportButton.disabled = true;
+           apiRequest('/api/import', { method: 'POST', body: JSON.stringify(sharedImport) })
+             .then(function (remote) {
+               closeImportModal();
+               sharedRevision = remote.revision;
+               sharedInitialized = !!remote.initialized;
+               applySharedPayload(remote.state);
+               sharedBaseline = JSON.stringify(normalizeSharedPayload(remote.state));
+               if (storageOK) { try { localStorage.removeItem(RECOVERY_KEY); } catch (e) {} }
+               renderAll();
+               updateStorageUI('本机备份已导入共享库，活动日志也已迁移。');
+             })
+             .catch(function (err) {
+               document.getElementById('imSub').textContent = '导入未完成';
+               document.getElementById('imBody').innerHTML = '<div class="im-err">' + esc(err.message) + '</div>';
+               sharedImportButton.disabled = false;
+             });
+           return;
+         }
          if (mode === 'merge') {
            var seen = {};
            state.tasks.forEach(function (t) { seen[t.id] = 1; });
@@ -1121,10 +1741,18 @@
               if (seenN[n.id]) return;
               seenN[n.id] = 1; state.notes.push(n);
             });
+            var seenLog = {};
+            state.log.forEach(function (entry) { seenLog[JSON.stringify([entry.d, entry.ts, entry.type, entry.id, entry.title, entry.from, entry.to])] = 1; });
+            (pendingLog || []).forEach(function (entry) {
+              var key = JSON.stringify([entry.d, entry.ts, entry.type, entry.id, entry.title, entry.from, entry.to]);
+              if (seenLog[key]) return;
+              seenLog[key] = 1; state.log.push(entry);
+            });
           } else {
             state.tasks = pendingImport;
             state.fixed = pendingFixed || [];
             state.notes = pendingNotes || [];
+            state.log = pendingLog || [];
           }
         state.tasks.forEach(function (t) {
           if (STAGE_MIGRATE[t.stage]) t.stage = STAGE_MIGRATE[t.stage];
@@ -1138,7 +1766,13 @@
       importModal.addEventListener('click', function (e) { if (e.target === importModal) closeImportModal(); });
       document.getElementById('imMerge').addEventListener('click', function () { applyImportedTasks('merge'); });
       document.getElementById('imOverwrite').addEventListener('click', function () { applyImportedTasks('overwrite'); });
-      document.getElementById('importBtn').addEventListener('click', function () { document.getElementById('importFile').click(); });
+      document.getElementById('importBtn').addEventListener('click', function () {
+        if (dataMode === 'shared' && sharedInitialized) {
+          updateStorageUI('共享库已有数据；首次迁移入口已关闭，避免覆盖。');
+          return;
+        }
+        document.getElementById('importFile').click();
+      });
       document.getElementById('importFile').addEventListener('change', function (e) {
         var file = e.target.files && e.target.files[0];
         this.value = '';
@@ -1150,7 +1784,7 @@
           var tasks = data && Array.isArray(data.tasks) ? data.tasks
             : Array.isArray(data) ? data
             : null;
-          if (!tasks || !tasks.length) {
+          if (!Array.isArray(tasks)) {
             document.getElementById('imSub').textContent = '文件无效';
             document.getElementById('imBody').innerHTML = '<div class="im-err">不是本工具的备份文件：缺少任务数据（JSON 中的 tasks 数组）。</div>';
             importModal.hidden = false;
@@ -1159,13 +1793,19 @@
             pendingImport = tasks.filter(function (t) { return t && t.id; });
             pendingFixed = data && Array.isArray(data.fixed) ? data.fixed.filter(function (f) { return f && f.id; }) : [];
             pendingNotes = data && Array.isArray(data.notes) ? data.notes.filter(function (n) { return n && n.id && n.date; }) : [];
+            pendingLog = data && Array.isArray(data.log) ? data.log.filter(function (entry) { return entry && typeof entry === 'object'; }) : [];
+           document.getElementById('imMerge').textContent = dataMode === 'shared' ? '初始化共享库' : '合并（保留现有）';
+           document.getElementById('imOverwrite').hidden = dataMode === 'shared';
            var exist = {};
            state.tasks.forEach(function (t) { exist[t.id] = 1; });
            var addN = pendingImport.filter(function (t) { return !exist[t.id]; }).length;
            document.getElementById('imSub').textContent = file.name;
            document.getElementById('imBody').innerHTML = '<div class="im-sum">备份共 <b>' + pendingImport.length + '</b> 个任务'
              + (pendingFixed.length ? '、固定日程 <b>' + pendingFixed.length + '</b> 条' : '')
-             + '；当前已有 <b>' + state.tasks.length + '</b> 个，其中 <b>' + addN + '</b> 个会新增。</div>';
+             + (pendingNotes.length ? '、便签 <b>' + pendingNotes.length + '</b> 条' : '')
+             + (pendingLog.length ? '、活动日志 <b>' + pendingLog.length + '</b> 条' : '')
+             + (dataMode === 'shared' ? '；首次导入仅写入空共享库，不会覆盖已有共享数据。' : '；当前已有 <b>' + state.tasks.length + '</b> 个，其中 <b>' + addN + '</b> 个会新增。')
+             + '</div>';
           importModal.hidden = false;
         };
         reader.readAsText(file);
@@ -1222,6 +1862,37 @@
             + '<div class="hint">→ ' + f.hint + '</div>'
             + '</div>';
         });
+        var relList = (t.relatedIds || []).map(function (rid) {
+          return state.tasks.find(function (x) { return x.id === rid; });
+        }).filter(Boolean);
+        var availTasks = state.tasks.filter(function (x) {
+          return x.id !== t.id && (t.relatedIds || []).indexOf(x.id) === -1;
+        });
+        html += '<div class="field" style="grid-column: 1 / -1;">'
+          + '<div class="f-label">所属分组 / 标签</div>'
+          + '<div class="d-tag-row">'
+          + '<input type="text" class="d-tag-input" data-field="tag" value="' + esc(t.tag || t.group || '') + '" placeholder="输入分组名称，如：需求规划、交易服务…" />'
+          + (relList.length && (t.tag || t.group) ? '<button type="button" class="btn-ghost" data-action="sync-group" title="将当前分组标签同步应用到所有已关联的事项">同步至关联事项</button>' : '')
+          + (t.tag || t.group ? (function () { var th = groupThemeOf(t.tag || t.group); return '<span class="chip chip-tag" style="background:' + th.bg + ';border-color:' + th.border + ';color:' + th.text + ';pointer-events:none;">🏷️ ' + esc(t.tag || t.group) + '</span>'; })() : '<span class="hint" style="display:inline;">同组事项在搜索和列表中自动具有相同专属色影标识</span>')
+          + '</div></div>';
+        html += '<div class="field" style="grid-column: 1 / -1;">'
+          + '<div class="f-label">关联事项 (' + relList.length + ')</div>'
+          + '<div class="d-rel-pick">'
+          + '<select id="relTaskSelect" aria-label="选择要关联的事项">'
+          + '<option value="">＋ 选择要关联的清单事项…</option>'
+          + availTasks.map(function (at) {
+              return '<option value="' + at.id + '">[' + at.stage + '] ' + esc(at.title) + '</option>';
+            }).join('')
+          + '</select>'
+          + '<button type="button" class="btn-ghost" data-action="add-rel">确认关联</button>'
+          + (relList.length ? '<div class="d-rel-chips">' + relList.map(function (rt) {
+              return '<span class="chip-rel-link" data-stop="1">'
+                + '<span data-action="jump-rel" data-task-id="' + rt.id + '" title="点击跳转并展开此事项"><span class="rel-arrow">↗</span> '
+                + '[' + esc(rt.stage) + '] ' + esc(rt.title) + '</span>'
+                + '<button type="button" class="modal-close" style="width:18px;height:18px;font-size:12px;margin-left:4px;" data-action="remove-rel" data-task-id="' + rt.id + '" title="取消关联">✕</button>'
+                + '</span>';
+            }).join('') + '</div>' : '<span class="hint" style="display:block;margin-top:4px;">暂无关联事项，可从下拉框选择并点击关联</span>')
+          + '</div></div>';
         html += '</div><div class="d-actions">'
           + '<span class="d-actions-hint">阶段在顶部切换 · 勾选框可快速完成</span>'
           + '<button type="button" class="btn-ghost danger" data-action="delete">删除任务</button>'
@@ -1305,6 +1976,45 @@ if (s === '已完成') { t.done = true; t.stage = '已完成'; t.completedOn = f
           state.tasks = state.tasks.filter(function (x) { return x.id !== t.id; });
           state.selectedId = null;
           save(); renderAll();
+        } else if (action === 'sync-group') {
+          var curTag = String(t.tag || t.group || '').trim();
+          if (curTag) {
+            (t.relatedIds || []).forEach(function (rid) {
+              var rt = state.tasks.find(function (x) { return x.id === rid; });
+              if (rt) { rt.tag = curTag; }
+            });
+            save(); renderAll(); revealDrawer();
+          }
+        } else if (action === 'add-rel') {
+          var sel = drawerEl.querySelector('#relTaskSelect');
+          if (sel && sel.value) {
+            var targetId = sel.value;
+            if (!t.relatedIds) t.relatedIds = [];
+            if (t.relatedIds.indexOf(targetId) === -1) {
+              t.relatedIds.push(targetId);
+              var targetTask = state.tasks.find(function (x) { return x.id === targetId; });
+              if (targetTask) {
+                if (!targetTask.relatedIds) targetTask.relatedIds = [];
+                if (targetTask.relatedIds.indexOf(t.id) === -1) targetTask.relatedIds.push(t.id);
+              }
+              save(); renderAll(); revealDrawer();
+            }
+          }
+        } else if (action === 'remove-rel') {
+          var rmId = btn.getAttribute('data-task-id');
+          if (rmId && t.relatedIds) {
+            t.relatedIds = t.relatedIds.filter(function (x) { return x !== rmId; });
+            var otherTask = state.tasks.find(function (x) { return x.id === rmId; });
+            if (otherTask && otherTask.relatedIds) {
+              otherTask.relatedIds = otherTask.relatedIds.filter(function (x) { return x !== t.id; });
+            }
+            save(); renderAll(); revealDrawer();
+          }
+        } else if (action === 'jump-rel') {
+          var jId = btn.getAttribute('data-task-id');
+          if (jId) {
+            selectTaskLocate(jId);
+          }
         }
       });
 
@@ -1364,7 +2074,7 @@ if (s === '已完成') { t.done = true; t.stage = '已完成'; t.completedOn = f
       }
       /* ---------- activity log / day summary / quick notes ---------- */
       function logAct(type, t, from, to) {
-        state.log.push({ d: fmtISO(new Date()), ts: Date.now(), type: type, id: t.id, title: t.title, from: from || '', to: to || '' });
+        state.log.push({ d: fmtISO(new Date()), ts: Date.now(), type: type, id: t.id, title: t.title, from: from || '', to: to || '', actor: dataMode === 'shared' ? sharedMember : '' });
         if (state.log.length > 2000) state.log = state.log.slice(-2000);
       }
       function daySummary(iso) {
@@ -2396,19 +3106,38 @@ document.getElementById('mBody').addEventListener('keydown', function (e) {
         var ver = uwLink.getAttribute('data-ver') || '';
         if (!url) return;
         uwLink.disabled = true;
-        uwLink.textContent = '下载中…';
-        fetch(url, { mode: 'cors' })
-          .then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.text(); })
-          .then(function (text) {
-            downloadBlob('todo-flow-v' + ver + '.html', text, 'text/html;charset=utf-8');
-            uwLink.textContent = '下载完成';
-            setTimeout(function () { uwLink.textContent = '下载新版'; uwLink.disabled = false; }, 2500);
-          })
-          .catch(function () {
+        if (FLOW_BOARD_SERVER) {
+          uwLink.textContent = '正在升级服务端…';
+          apiRequest('/api/upgrade', {
+            method: 'POST',
+            body: JSON.stringify({ url: url })
+          }).then(function () {
+            uwLink.textContent = '升级成功，即将刷新…';
+            setTimeout(function () {
+              window.location.reload();
+            }, 1200);
+          }).catch(function (err) {
+            alert('一键升级失败: ' + ((err && err.message) || err || '网络错误') + '
+将为您在新窗口打开下载页面。');
             window.open(url, '_blank', 'noopener');
-            uwLink.textContent = '已在新窗口打开';
-            setTimeout(function () { uwLink.textContent = '下载新版'; uwLink.disabled = false; }, 2500);
+            uwLink.textContent = '一键升级服务';
+            uwLink.disabled = false;
           });
+        } else {
+          uwLink.textContent = '下载中…';
+          fetch(url, { mode: 'cors' })
+            .then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.text(); })
+            .then(function (text) {
+              downloadBlob('todo-flow-v' + ver + '.html', text, 'text/html;charset=utf-8');
+              uwLink.textContent = '下载完成';
+              setTimeout(function () { uwLink.textContent = '下载新版'; uwLink.disabled = false; }, 2500);
+            })
+            .catch(function () {
+              window.open(url, '_blank', 'noopener');
+              uwLink.textContent = '已在新窗口打开';
+              setTimeout(function () { uwLink.textContent = '下载新版'; uwLink.disabled = false; }, 2500);
+            });
+        }
       });
       if (VERSION_URL.indexOf('YOURNAME') === -1) {
         fetch(VERSION_URL, { mode: 'cors' })
@@ -2424,6 +3153,12 @@ document.getElementById('mBody').addEventListener('keydown', function (e) {
             uwPreview.href = url;
             uwLink.setAttribute('data-url', url);
             uwLink.setAttribute('data-ver', data.version);
+            if (FLOW_BOARD_SERVER) {
+              uwLink.textContent = '一键升级服务';
+              uwLink.title = '服务端自动下载最新版覆盖并刷新，无需手动替换文件';
+            } else {
+              uwLink.textContent = '下载新版';
+            }
             uw.hidden = false;
           })
           .catch(function () {});
@@ -2432,7 +3167,111 @@ document.getElementById('mBody').addEventListener('keydown', function (e) {
       document.getElementById('todayLabel').textContent =
         now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
        function renderAll() { renderNav(); renderKpis(); renderList(); renderView(); renderDrawer(); renderFixedPanel(); }
-      renderAll();
+      
+      /* ---------- audit trail & rollback ---------- */
+      var auditModal = document.getElementById('auditModal');
+      var auditBtn = document.getElementById('auditBtn');
+      var auditClose = document.getElementById('auditClose');
+      var auditListEl = document.getElementById('auditList');
+      var lastAuditTs = 0;
+
+      function getAuditTrail() {
+        if (!storageOK) return [];
+        try {
+          var arr = JSON.parse(localStorage.getItem(AUDIT_KEY));
+          if (!Array.isArray(arr)) return [];
+          var oneDayAgo = Date.now() - 86400000;
+          return arr.filter(function (x) { return x && x.ts >= oneDayAgo; });
+        } catch (e) { return []; }
+      }
+
+      function recordAuditSnapshot() {
+        if (!storageOK) return;
+        var now = Date.now();
+        if (now - lastAuditTs < 1000) return; // 1秒内合并同一操作触发
+        lastAuditTs = now;
+        try {
+          var list = getAuditTrail();
+          var snapTasks = (state.tasks || []).map(function (t) { return Object.assign({}, t); });
+          var last = list[list.length - 1];
+          // 比较任务数或内容，避免完全无变化的冗余快照
+          var summary = '事项 ' + snapTasks.length + ' 项（' + snapTasks.filter(function (x) { return !x.done; }).length + ' 待完成 / ' + snapTasks.filter(function (x) { return x.done; }).length + ' 已完成）';
+          list.push({
+            id: uid(),
+            ts: now,
+            summary: summary,
+            tasks: snapTasks,
+            fixed: (state.fixed || []).slice(0),
+            notes: (state.notes || []).slice(0)
+          });
+          // 限制上限最多 80 条快照
+          if (list.length > 80) list = list.slice(-80);
+          localStorage.setItem(AUDIT_KEY, JSON.stringify(list));
+        } catch (e) {}
+      }
+
+      function renderAuditList() {
+        var list = getAuditTrail();
+        if (!list.length) {
+          auditListEl.innerHTML = '<div class="audit-empty">最近 24 小时内暂无修改快照。<br/>当您添加、修改或完成事项时，系统会自动生成版本记录。</div>';
+          return;
+        }
+        // 按时间倒序展示
+        var sorted = list.slice().reverse();
+        auditListEl.innerHTML = sorted.map(function (item, idx) {
+          var d = new Date(item.ts);
+          var timeStr = String(d.getFullYear()) + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') + ':' + String(d.getSeconds()).padStart(2, '0');
+          var isLatest = idx === 0;
+          var diffMin = Math.round((Date.now() - item.ts) / 60000);
+          var agoStr = diffMin < 1 ? '刚刚' : (diffMin < 60 ? diffMin + ' 分钟前' : Math.floor(diffMin / 60) + ' 小时前');
+          return '<div class="audit-item">'
+            + '<div class="audit-meta">'
+            + '<div class="audit-time">' + timeStr + ' · ' + agoStr + (isLatest ? ' <span class="chip" style="padding:1px 6px;font-size:11px;background:var(--highlight);color:var(--ink);border-color:var(--ink);">当前版本</span>' : '') + '</div>'
+            + '<div class="audit-desc">' + esc(item.summary) + '</div>'
+            + '</div>'
+            + (!isLatest ? '<button type="button" class="audit-btn" data-audit-id="' + item.id + '" title="恢复到此快照版本">↺ 回滚到此版本</button>' : '<span class="hint" style="flex-shrink:0;">最新</span>')
+            + '</div>';
+        }).join('');
+      }
+
+      if (auditBtn) {
+        auditBtn.addEventListener('click', function () {
+          renderAuditList();
+          auditModal.hidden = false;
+        });
+      }
+      if (auditClose) {
+        auditClose.addEventListener('click', function () {
+          auditModal.hidden = true;
+        });
+      }
+      if (auditModal) {
+        auditModal.addEventListener('click', function (e) {
+          if (e.target === auditModal) auditModal.hidden = true;
+          var rbBtn = e.target.closest('[data-audit-id]');
+          if (rbBtn) {
+            var aid = rbBtn.getAttribute('data-audit-id');
+            var list = getAuditTrail();
+            var target = list.find(function (x) { return x.id === aid; });
+            if (target && target.tasks) {
+              if (window.confirm('确认回滚到此版本？当前未保存的修改将被替换。')) {
+                state.tasks = target.tasks.map(function (x) { return Object.assign({}, x); });
+                if (target.fixed) state.fixed = target.fixed.slice(0);
+                if (target.notes) state.notes = target.notes.slice(0);
+                state.selectedId = null;
+                save();
+                renderAll();
+                auditModal.hidden = true;
+              }
+            }
+          }
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && !auditModal.hidden) auditModal.hidden = true;
+        });
+      }
+
+      bootStorage();
     })();
   </script>
 </body>

@@ -1,10 +1,13 @@
 # 流程待办 · Flow Board
 
-一个**单文件、零依赖**的个人任务管理看板：整个应用就是一个 `todo-flow.html`，双击即可离线使用，数据全部保存在浏览器本地。
+一个轻量任务看板，按 `待办 → 进行中 → 已完成` 三阶段管理任务。支持两种数据模式：
 
-**在线使用**：https://shadowwitheagle.github.io/todo-flow/todo-flow.html
+- **本机模式**：直接打开 `todo-flow.html`，数据保存在当前浏览器，可离线使用。
+- **局域网共享模式**：通过 `server.py` 让小组成员访问同一份任务、固定日程、便签和活动日志；部署步骤见 [LAN_SETUP.md](LAN_SETUP.md)。
 
-![版本](https://img.shields.io/badge/version-0.7.0-blue)
+**个人在线版**：https://shadowwitheagle.github.io/todo-flow/todo-flow.html。静态托管页面仍是本机模式，不会在不同成员之间共享数据。
+
+![版本](https://img.shields.io/badge/version-0.7.4-blue)
 
 ---
 
@@ -31,12 +34,15 @@
 - **导出 / 导入**：全量 JSON 备份，导入支持「合并（保留现有）」或「覆盖」
 
 ### 数据与更新
-- 数据存储在 `localStorage`（键：`flow-todo-v1`），离线可用；无法持久化时会显示警告
-- 内置版本检查：打开页面时比对于 `version.json`，有新版本会提示更新
+- 本机模式的数据存储在 `localStorage`（键：`flow-todo-v1`），离线可用；无法持久化时会显示警告
+- “本机同步”把本机数据写入用户选择的本地文件，便于备份或恢复；它不提供团队共享
+- 局域网共享模式由 Python 服务保存到 SQLite，修改会同步给其他在线成员；并发修改时会提示冲突并保留未同步草稿
+- 局域网共享无需共享口令，任何可访问局域网地址的人输入自定义显示名称即可加入协作并具备完整读写权限；显示名称未经核验，不构成身份凭证。仅供可信局域网使用，切勿暴露到公网。部署与安全边界见 [LAN_SETUP.md](LAN_SETUP.md)
+- 内置版本检查：打开页面时比较 `version.json`，有新版本会提示更新
 
 ## 本地运行
 
-无需构建，直接用浏览器打开：
+无需构建，直接用浏览器打开即可使用本机模式：
 
 ```bash
 # 任选其一
@@ -44,15 +50,18 @@ open todo-flow.html        # macOS
 start todo-flow.html       # Windows
 ```
 
-或部署到任意静态托管（如 GitHub Pages）即可。
+部署到静态托管（如 GitHub Pages）也仍是本机模式；如需多人共享，请按 [LAN_SETUP.md](LAN_SETUP.md) 启动局域网服务。
 
 ## 文件说明
 
 | 文件 | 作用 |
 |---|---|
-| `todo-flow.html` | 应用本体（样式 + 逻辑全部内嵌） |
+| `todo-flow.html` | 应用页面；本机模式可直接打开，局域网模式由服务注入共享标记 |
+| `server.py` | 局域网共享服务与 API |
+| `start-flow-board.cmd` | 双击启动局域网服务；窗口关闭或按 Ctrl+C 会停止服务 |
+| `LAN_SETUP.md` | 局域网部署、数据迁移、备份与使用边界 |
 | `version.json` | 版本信息，用于应用内更新提示 |
 
 ## 技术栈
 
-原生 HTML / CSS / JavaScript，无任何框架与构建步骤；字体通过 Google Fonts 加载（断网时回退系统字体）。
+原生 HTML / CSS / JavaScript；局域网服务使用 Python 标准库和 SQLite，无额外依赖或构建步骤。字体通过 Google Fonts 加载（断网时回退系统字体）。

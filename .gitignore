@@ -1,8 +1,18 @@
-# Open Design 内部文件，不入库
+﻿# Open Design 内部文件，不入库
 .file-versions/
 .od-skills/
+.od-frames/
 *.artifact.json
 
 # 原型开发辅助文件，不是产品本体
 example.html
 index.html
+
+# 运行缓存与局域网数据
+__pycache__/
+*.pyc
+/data/
+
+# 临时截图图片
+image*.png
+drawing*.png
