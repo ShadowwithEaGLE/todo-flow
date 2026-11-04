@@ -3117,8 +3117,7 @@ document.getElementById('mBody').addEventListener('keydown', function (e) {
               window.location.reload();
             }, 1200);
           }).catch(function (err) {
-            alert('一键升级失败: ' + ((err && err.message) || err || '网络错误') + '
-将为您在新窗口打开下载页面。');
+            alert('一键升级失败: ' + ((err && err.message) || err || '网络错误') + '\n将为您在新窗口打开下载页面。');
             window.open(url, '_blank', 'noopener');
             uwLink.textContent = '一键升级服务';
             uwLink.disabled = false;
