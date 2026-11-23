@@ -28,11 +28,32 @@ Flow Board 把任务看板、日历和日报周报放在同一个页面。个人
 
 ## 选择你的使用方式
 
-| 场景 | 怎么开始 | 数据存在哪里 |
-| --- | --- | --- |
-| 个人在线用 | [打开个人在线版](https://shadowwitheagle.github.io/todo-flow/todo-flow.html) | 当前浏览器的站点存储 |
-| 个人离线用 | 下载仓库，直接打开 `todo-flow.html` | 当前浏览器的本机页面存储，可导出或使用本机文件同步 |
-| 团队一起用 | 在可信局域网内运行 Python 服务，按 [局域网手册](LAN_SETUP.md) 启动 | 部署电脑的 SQLite 数据库，在线成员共享任务、日程、便签和活动日志 |
+<table>
+  <thead>
+    <tr>
+      <th width="136" scope="col">场景</th>
+      <th scope="col">怎么开始</th>
+      <th scope="col">数据存在哪里</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td nowrap>个人在线用</td>
+      <td><a href="https://shadowwitheagle.github.io/todo-flow/todo-flow.html">打开个人在线版</a></td>
+      <td>当前浏览器的站点存储</td>
+    </tr>
+    <tr>
+      <td nowrap>个人离线用</td>
+      <td>下载仓库，直接打开 <code>todo-flow.html</code></td>
+      <td>当前浏览器的本机页面存储，可导出或使用本机文件同步</td>
+    </tr>
+    <tr>
+      <td nowrap>团队一起用</td>
+      <td>在可信局域网内运行 Python 服务，按 <a href="LAN_SETUP.md">局域网手册</a>启动</td>
+      <td>部署电脑的 SQLite 数据库，在线成员共享任务、日程、便签和活动日志</td>
+    </tr>
+  </tbody>
+</table>
 
 个人在线版和离线版都使用浏览器本地存储。换浏览器或访问地址时，可用 JSON 导出、导入迁移。局域网版以显示名称标记活动，网络可达的成员拥有读写权限，请仅在可信局域网使用。
 
